@@ -7,6 +7,9 @@ config({});
 
 const envSchema = z.object({
   PORT: z.preprocess(Number, z.number()),
+
+  GITHUB_CLIENT_ID: z.string().nonempty(),
+  GITHUB_CLIENT_SECRET: z.string().nonempty(),
 });
 
 const validation = envSchema.safeParse(process.env);

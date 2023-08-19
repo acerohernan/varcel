@@ -6,7 +6,8 @@
     "outDir": "./dist",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@v1/*": ["./app/v1/*"]
     },
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
