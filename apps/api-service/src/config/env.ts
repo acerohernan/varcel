@@ -10,6 +10,8 @@ const envSchema = z.object({
 
   GITHUB_CLIENT_ID: z.string().nonempty(),
   GITHUB_CLIENT_SECRET: z.string().nonempty(),
+
+  POSTGRES_URL: z.string().nonempty(),
 });
 
 const validation = envSchema.safeParse(process.env);

@@ -1,5 +1,6 @@
-import { BadRequestError } from "@/lib/errors";
 import Router from "express-promise-router";
+
+import { BadRequestError } from "@/lib/errors";
 
 export const userRouter = Router();
 

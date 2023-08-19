@@ -20,7 +20,7 @@ passport.use(
     ) => {
       if (profile && profile._json) return done(null, profile._json);
 
-      done(null, null);
+      return done(null, null);
     }
   )
 );

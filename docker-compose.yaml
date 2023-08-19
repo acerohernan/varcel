@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  api-db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    container_name: api-db
+    volumes:
+      - api-db-vol:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=vercel_clone
+
+volumes:
+  api-db-vol:
+    driver: local
