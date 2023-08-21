@@ -24,13 +24,31 @@ export class NotFoundError extends HttpError {
 }
 
 export class BadRequestError extends HttpError {
-  constructor(errors: string[]) {
-    super({ code: 400, errMessage: errors[0] ?? "BAD_REQUEST", errors });
+  constructor(error: string | string[]) {
+    let errorsArr: string[] = [];
+
+    if (typeof error === "string") {
+      errorsArr.push(error);
+    } else {
+      errorsArr = error;
+    }
+
+    super({
+      code: 400,
+      errMessage: errorsArr[0] ?? "BAD_REQUEST",
+      errors: errorsArr,
+    });
   }
 }
 
 export class UnathorizedError extends HttpError {
   constructor(errMessage: string) {
     super({ code: 401, errMessage, errors: [errMessage] });
+  }
+}
+
+export class InternalServerError extends HttpError {
+  constructor(errMessage: string) {
+    super({ code: 500, errMessage, errors: [errMessage] });
   }
 }

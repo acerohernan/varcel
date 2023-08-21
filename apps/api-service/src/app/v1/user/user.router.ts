@@ -1,11 +1,14 @@
 import Router from "express-promise-router";
 
-import { BadRequestError } from "@/lib/errors";
+import { verifyJwt } from "../shared/middlewares/verifyJwt";
+
+import {
+  getRepositoriesHandler,
+  setupGithubIntegrationHandler,
+} from "./user.controller";
 
 export const userRouter = Router();
 
-userRouter.get("/error", async (req, res) => {
-  throw new BadRequestError(["Email not authorized"]);
+userRouter.get("/repository/github/setup", setupGithubIntegrationHandler);
 
-  res.status(200).send();
-});
+userRouter.get("/repository", verifyJwt, getRepositoriesHandler);

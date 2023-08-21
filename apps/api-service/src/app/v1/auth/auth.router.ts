@@ -6,10 +6,7 @@ import { githubCallbackHandler } from "./auth.controller";
 
 export const authRouter = Router();
 
-authRouter.get(
-  "/github",
-  passport.authenticate("github", { scope: ["user:email"], session: false })
-);
+authRouter.get("/github", passport.authenticate("github", { session: false }));
 
 authRouter.get(
   "/github/callback",

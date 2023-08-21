@@ -8,8 +8,16 @@ config({});
 const envSchema = z.object({
   PORT: z.preprocess(Number, z.number()),
 
-  GITHUB_CLIENT_ID: z.string().nonempty(),
-  GITHUB_CLIENT_SECRET: z.string().nonempty(),
+  JWT_SECRET: z.string().nonempty(),
+  JWT_SESSION_DURATION_IN_SECONDS: z.preprocess(Number, z.number()),
+
+  GITHUB_OAUTH_CLIENT_ID: z.string(),
+  GITHUB_OAUTH_CLIENT_SECRET: z.string(),
+
+  GITHUB_APP_CLIENT_ID: z.string().nonempty(),
+  GITHUB_APP_CLIENT_SECRET: z.string().nonempty(),
+  GITHUB_APP_ID: z.string().nonempty(),
+  GITHUB_APP_SECRET_KEY: z.string().nonempty(),
 
   POSTGRES_URL: z.string().nonempty(),
 });

@@ -2,9 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import Router from "express-promise-router";
 
-import { v1Router } from "@v1/router";
 import { HttpError } from "@/lib/errors";
-import { logger } from "./config/logger";
+import { logger } from "@/config/logger";
+
+import { v1Router } from "@v1/router";
 
 export const router = Router();
 
@@ -20,7 +21,7 @@ router.use(function (
   res: Response,
   next: NextFunction
 ) {
-  if (err instanceof HttpError) {
+  if (err instanceof HttpError && err.code !== 500) {
     const { code, message, errors } = err;
 
     if (code === 400) return res.status(code).send({ errors });
