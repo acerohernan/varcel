@@ -1,18 +1,17 @@
-import { injectable } from "inversify";
-import { eq } from "drizzle-orm";
 import axios from "axios";
 import { Octokit } from "@octokit/rest";
+import { inject, injectable } from "inversify";
 import { createAppAuth } from "@octokit/auth-app";
+
+import { BadRequestError } from "@/lib/errors";
 
 import { logger } from "@/config/logger";
 import { env } from "@/config/env";
 
-import { db } from "@/db";
-import { userGhIntegrations } from "@/db/schema/user";
-
-import { BadRequestError } from "@/lib/errors";
-
 import { getZodErrors } from "@v1/shared/lib/zod";
+import { CONTAINER_TYPES } from "@v1/shared/container/types";
+
+import { UserGhIntegrationRepository } from "../repositories/user-gh-integration.repository";
 
 import {
   GetRepositoriesDTO,
@@ -25,7 +24,10 @@ import {
 
 @injectable()
 export class UserService {
-  constructor() {}
+  constructor(
+    @inject(CONTAINER_TYPES.UserGhIntegrationRepository)
+    private integrationRepository: UserGhIntegrationRepository
+  ) {}
 
   async setupGithubIntegration(dto: TSetupGithubIntegrationDTO): Promise<void> {
     const validation = SetupGithubIntegrationDTO.safeParse(dto);
@@ -60,17 +62,16 @@ export class UserService {
     const userGithubId = request.data.id;
 
     // Query a user with the same github id
-    const integration = await db.query.userGhIntegrations.findFirst({
-      where: eq(userGhIntegrations.ghUserId, userGithubId),
-    });
+    const integration = await this.integrationRepository.getByGhId(
+      userGithubId
+    );
 
     if (!integration) return;
 
-    // Save the integration id to the db
-    await db
-      .update(userGhIntegrations)
-      .set({ ghInstallationId: installationId })
-      .where(eq(userGhIntegrations.id, integration.id));
+    // Update the record with the installation_id
+    await this.integrationRepository.update(integration.id, {
+      ghInstallationId: installationId,
+    });
   }
 
   async getRepositories(
@@ -84,9 +85,7 @@ export class UserService {
     const { userId, page, perPage } = dto;
 
     // Find user's github integration
-    const integration = await db.query.userGhIntegrations.findFirst({
-      where: eq(userGhIntegrations.userId, userId),
-    });
+    const integration = await this.integrationRepository.getByUserId(userId);
 
     if (!integration || !integration.ghInstallationId)
       return { repositories: [], totalCount: 0 };

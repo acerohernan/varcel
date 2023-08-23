@@ -6,6 +6,9 @@ export const CONTAINER_TYPES = {
   /* Services */
   AuthService: Symbol.for("AuthService"),
   UserService: Symbol.for("UserService"),
-
   JWTService: Symbol.for("JWTService"),
+
+  /* Repositories */
+  UserRepository: Symbol.for("UserRepository"),
+  UserGhIntegrationRepository: Symbol.for("UserGhIntegrationRepository"),
 };

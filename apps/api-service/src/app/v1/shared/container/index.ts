@@ -8,6 +8,8 @@ import { UserService } from "@v1/user/services/user.service";
 import { JWTService } from "../services/jwt.service";
 
 import { CONTAINER_TYPES } from "./types";
+import { UserRepository } from "../repositories/user.repository";
+import { UserGhIntegrationRepository } from "../../user/repositories/user-gh-integration.repository";
 
 export const container = new Container();
 
@@ -20,3 +22,9 @@ container.bind(CONTAINER_TYPES.AuthService).to(AuthService);
 container.bind(CONTAINER_TYPES.UserService).to(UserService);
 
 container.bind(CONTAINER_TYPES.JWTService).to(JWTService);
+
+/* Repositories */
+container.bind(CONTAINER_TYPES.UserRepository).to(UserRepository);
+container
+  .bind(CONTAINER_TYPES.UserGhIntegrationRepository)
+  .to(UserGhIntegrationRepository);
