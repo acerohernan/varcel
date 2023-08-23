@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import express, { json, urlencoded } from "express";
 import cors from "cors";
 import helmet from "helmet";

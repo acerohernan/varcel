@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import Router from "express-promise-router";
+import { NextFunction, Request, Response } from "express";
 
 import { HttpError } from "@/lib/errors";
 import { logger } from "@/config/logger";
@@ -16,12 +16,12 @@ router.use(
 router.use("/v1", v1Router);
 
 router.use(function (
-  err: Error,
+  err: any,
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  if (err instanceof HttpError && err.code !== 500) {
+  if (err.errors && err.code && err.code !== 500) {
     const { code, message, errors } = err;
 
     if (code === 400) return res.status(code).send({ errors });

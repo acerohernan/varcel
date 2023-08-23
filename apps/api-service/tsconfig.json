@@ -1,19 +1,23 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ES5",
+    "lib": ["ES2016"],
+    "types": ["reflect-metadata"],
     "module": "commonjs",
     "allowJs": false,
     "outDir": "./dist",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"],
-      "@v1/*": ["./app/v1/*"]
+      "@v1/*": ["./app/v1/*"],
+      "@/*": ["./*"]
     },
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
