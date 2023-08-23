@@ -2,13 +2,16 @@ export const CONTAINER_TYPES = {
   /* Controllers */
   AuthController: Symbol.for("AuthController"),
   UserController: Symbol.for("UserController"),
+  ProjectController: Symbol.for("ProjectController"),
 
   /* Services */
+  JWTService: Symbol.for("JWTService"),
   AuthService: Symbol.for("AuthService"),
   UserService: Symbol.for("UserService"),
-  JWTService: Symbol.for("JWTService"),
+  ProjectService: Symbol.for("ProjectService"),
 
   /* Repositories */
   UserRepository: Symbol.for("UserRepository"),
   UserGhIntegrationRepository: Symbol.for("UserGhIntegrationRepository"),
+  ProjectRepository: Symbol.for("ProjectRepository"),
 };
