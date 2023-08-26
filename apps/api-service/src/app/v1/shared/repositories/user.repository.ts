@@ -2,8 +2,14 @@ import { eq } from "drizzle-orm";
 import { injectable } from "inversify";
 
 import { db } from "@/db";
-import { User, UserGhIntegration } from "@/db/types";
-import { userGhIntegrations, users } from "@/db/schema/user";
+import {
+  NewUser,
+  NewUserGhIntegration,
+  User,
+  UserGhIntegration,
+} from "@/db/types";
+import { users } from "@/db/schema/user";
+import { userGhIntegrations } from "@/db/schema/user/gh-integration";
 
 export interface IUserRepository {
   getByEmail: (email: string) => Promise<User | undefined>;
@@ -20,7 +26,7 @@ export class UserRepository implements IUserRepository {
     });
   }
 
-  async create(newUser: User, newGhIntegration: UserGhIntegration) {
+  async create(newUser: NewUser, newGhIntegration: NewUserGhIntegration) {
     return db.transaction(async (tx) => {
       await tx.insert(users).values(newUser);
       await tx.insert(userGhIntegrations).values(newGhIntegration);

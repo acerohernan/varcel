@@ -3,7 +3,7 @@ import { injectable } from "inversify";
 
 import { db } from "@/db";
 import { NewUserGhIntegration, UserGhIntegration } from "@/db/types";
-import { userGhIntegrations } from "@/db/schema/user";
+import { userGhIntegrations } from "@/db/schema/user/gh-integration";
 
 export interface IUserGhIntegrationRepository {
   getByGhId: (ghId: number) => Promise<UserGhIntegration | undefined>;

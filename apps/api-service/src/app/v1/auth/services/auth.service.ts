@@ -3,7 +3,7 @@ import { inject, injectable } from "inversify";
 
 import { BadRequestError } from "@/lib/errors";
 
-import { User, UserGhIntegration } from "@/db/types";
+import { NewUser, NewUserGhIntegration } from "@/db/types";
 
 import { getZodErrors } from "@v1/shared/lib/zod";
 import { JWTService } from "@v1/shared/services/jwt.service";
@@ -28,19 +28,21 @@ export class AuthService {
 
     const { ghId, ghEmail, ghUsername } = dto;
 
-    let user: User | undefined;
+    let userId: string | undefined;
 
-    user = await this.userRepository.getByEmail(ghEmail);
+    const dbUser = await this.userRepository.getByEmail(ghEmail);
 
-    if (!user) {
-      let newUser: User = {
+    if (dbUser) {
+      userId = dbUser.id;
+    } else {
+      let newUser: NewUser = {
         id: uuid(),
         email: ghEmail,
         username: ghUsername,
         tierId: "47955fa1-02af-4dc0-b098-00404b0e52fb",
       };
 
-      let newGhIntegration: UserGhIntegration = {
+      let newGhIntegration: NewUserGhIntegration = {
         id: uuid(),
         userId: newUser.id,
         ghUserId: ghId,
@@ -49,10 +51,10 @@ export class AuthService {
 
       await this.userRepository.create(newUser, newGhIntegration);
 
-      user = newUser;
+      userId = newUser.id;
     }
 
-    const accessToken = this.jwtService.signJwtToken({ id: user.id });
+    const accessToken = this.jwtService.signJwtToken({ id: userId });
 
     return { accessToken };
   }

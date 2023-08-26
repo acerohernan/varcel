@@ -1,20 +1,37 @@
 import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 
-import { CONTAINER_TYPES } from "@v1/shared/container/types";
+import { UnathorizedError } from "@/lib/errors";
 
+import { CONTAINER_TYPES } from "@v1/shared/container/types";
+import { JWTUser } from "@v1/shared/middlewares/verifyJwt";
 import { ProjectService } from "./services/project.service";
+import { DeploymentService } from "./services/deployment.service";
 
 @injectable()
 export class ProjectController {
   constructor(
     @inject(CONTAINER_TYPES.ProjectService)
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    @inject(CONTAINER_TYPES.DeploymentService)
+    private deploymentService: DeploymentService
   ) {}
 
   async createProjectHandler(req: Request, res: Response) {
-    await this.projectService.create(req.body);
+    const user: JWTUser = res.locals.user;
 
-    res.status(200).send({});
+    if (!user) throw new UnathorizedError("Token malformed");
+
+    await this.projectService.create({ ...req.body, userId: user.id });
+
+    res.sendStatus(200);
+  }
+
+  async createProjectDeploymentHandler(req: Request, res: Response) {
+    const projectId = req.params["projectId"];
+
+    await this.deploymentService.create({ projectId });
+
+    res.sendStatus(200);
   }
 }

@@ -14,3 +14,7 @@ const controller = container.get<ProjectController>(
 projectRouter.post("/", (req, res) =>
   controller.createProjectHandler(req, res)
 );
+
+projectRouter.post("/:projectId/deployment", (req, res) =>
+  controller.createProjectDeploymentHandler(req, res)
+);

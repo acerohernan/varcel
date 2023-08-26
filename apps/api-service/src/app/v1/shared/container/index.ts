@@ -13,6 +13,8 @@ import { UserGhIntegrationRepository } from "../../user/repositories/user-gh-int
 import { ProjectController } from "@v1/project/project.controller";
 import { ProjectService } from "@v1/project/services/project.service";
 import { ProjectRepository } from "@v1/project/repositories/project.repository";
+import { DeploymentService } from "@v1/project/services/deployment.service";
+import { DeploymentRepository } from "@v1/project/repositories/deployment.repository";
 
 export const container = new Container();
 
@@ -26,10 +28,12 @@ container.bind(CONTAINER_TYPES.JWTService).to(JWTService);
 container.bind(CONTAINER_TYPES.AuthService).to(AuthService);
 container.bind(CONTAINER_TYPES.UserService).to(UserService);
 container.bind(CONTAINER_TYPES.ProjectService).to(ProjectService);
+container.bind(CONTAINER_TYPES.DeploymentService).to(DeploymentService);
 
 /* Repositories */
 container.bind(CONTAINER_TYPES.UserRepository).to(UserRepository);
-container.bind(CONTAINER_TYPES.ProjectRepository).to(ProjectRepository);
 container
   .bind(CONTAINER_TYPES.UserGhIntegrationRepository)
   .to(UserGhIntegrationRepository);
+container.bind(CONTAINER_TYPES.ProjectRepository).to(ProjectRepository);
+container.bind(CONTAINER_TYPES.DeploymentRepository).to(DeploymentRepository);
