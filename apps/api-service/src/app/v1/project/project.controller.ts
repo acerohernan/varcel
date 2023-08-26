@@ -27,10 +27,14 @@ export class ProjectController {
     res.sendStatus(200);
   }
 
-  async createProjectDeploymentHandler(req: Request, res: Response) {
+  async createDeploymentHandler(req: Request, res: Response) {
+    const user: JWTUser = res.locals.user;
+
+    if (!user) throw new UnathorizedError("Token malformed");
+
     const projectId = req.params["projectId"];
 
-    await this.deploymentService.create({ projectId });
+    await this.deploymentService.create({ projectId, userId: user.id });
 
     res.sendStatus(200);
   }

@@ -15,6 +15,7 @@ import { ProjectService } from "@v1/project/services/project.service";
 import { ProjectRepository } from "@v1/project/repositories/project.repository";
 import { DeploymentService } from "@v1/project/services/deployment.service";
 import { DeploymentRepository } from "@v1/project/repositories/deployment.repository";
+import { GithubService } from "../services/github.service";
 
 export const container = new Container();
 
@@ -25,6 +26,7 @@ container.bind(CONTAINER_TYPES.ProjectController).to(ProjectController);
 
 /* Services */
 container.bind(CONTAINER_TYPES.JWTService).to(JWTService);
+container.bind(CONTAINER_TYPES.GithubService).to(GithubService);
 container.bind(CONTAINER_TYPES.AuthService).to(AuthService);
 container.bind(CONTAINER_TYPES.UserService).to(UserService);
 container.bind(CONTAINER_TYPES.ProjectService).to(ProjectService);

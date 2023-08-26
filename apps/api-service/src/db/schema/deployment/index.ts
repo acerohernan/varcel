@@ -22,7 +22,9 @@ export const deployments = pgTable("deployments", {
   }),
   durationInSeconds: integer("duration_in_seconds"),
   sourceGitBranch: varchar("source_git_branch"),
-  sourceGitCommit: varchar("source_git_commit"),
+  sourceGitCommitSha: varchar("source_git_commit_sha"),
+  sourceGitCommitMessage: varchar("source_git_commit_message"),
+  sourceGitCommitLink: varchar("source_git_commit_link"),
   buildLogs: text("build_logs"),
   screenshootUrl: varchar("screenshoot_url"),
 });

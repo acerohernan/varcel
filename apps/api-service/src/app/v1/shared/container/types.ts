@@ -6,6 +6,7 @@ export const CONTAINER_TYPES = {
 
   /* Services */
   JWTService: Symbol.for("JWTService"),
+  GithubService: Symbol.for("GithubService"),
   AuthService: Symbol.for("AuthService"),
   UserService: Symbol.for("UserService"),
   ProjectService: Symbol.for("ProjectService"),
