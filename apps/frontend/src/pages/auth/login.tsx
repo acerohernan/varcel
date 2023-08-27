@@ -1,51 +1,90 @@
-import { Box, Button, Heading } from "@chakra-ui/react";
-import { BsGithub } from "react-icons/bs";
-import { LiaGitlab } from "react-icons/lia";
-import { FaBitbucket } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useEffect, useMemo } from "react";
+import { AiFillGithub } from "react-icons/ai";
+import { FaGitlab } from "react-icons/fa";
+import { IoLogoBitbucket } from "react-icons/io";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const LoginPage = () => {
+  const [params] = useSearchParams();
+  const navigate = useNavigate();
+
+  const token: string | null = useMemo(() => params.get("token"), [params]);
+
+  useEffect(() => {
+    if (!token) return;
+
+    localStorage.setItem("token", token);
+
+    navigate("/");
+  }, [navigate, token]);
+
   return (
-    <Box
-      width="100%"
-      height="100vh"
-      backgroundColor="#000000"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-    >
-      <Box>
-        <Heading textColor="white" size="md" textAlign="center">
-          Login to Latin Station
-        </Heading>
-        <Box display="grid" gap={4} marginTop="8">
-          <Button leftIcon={<BsGithub />} width="100%" size="sm" fontSize="0.8rem" paddingX={9} paddingY={4}>
-            Continue to GitHub
-          </Button>
+    <div className="w-full h-[100vh] flex items-center justify-center">
+      <div className="p-4">
+        <h1 className="text-3xl font-bold text-center mb-10">Log in to Latin Station</h1>
+        <div className="grid gap-4">
           <Button
-            leftIcon={<LiaGitlab />}
-            width="100%"
-            size="sm"
-            colorScheme="purple"
-            fontSize="0.8rem"
-            paddingX={9}
-            paddingY={4}
+            variant="outline"
+            size="lg"
+            type="button"
+            className="w-full text-md flex items-center justify-center gap-2"
           >
-            Continue to GitLab
+            <div className="text-2xl">
+              <AiFillGithub />
+            </div>
+            Continue with Github
           </Button>
-          <Button
-            leftIcon={<FaBitbucket />}
-            width="100%"
-            size="sm"
-            colorScheme="blue"
-            fontSize="0.8rem"
-            paddingX={9}
-            paddingY={4}
-          >
-            Continue to GitBucket
-          </Button>
-        </Box>
-      </Box>
-    </Box>
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    type="button"
+                    className="w-full text-md flex items-center justify-center gap-2 bg-violet-700"
+                    disabled
+                  >
+                    <div className="text-xl">
+                      <FaGitlab />
+                    </div>
+                    Continue with Gitlab
+                  </Button>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Soon...</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    type="button"
+                    disabled
+                    className="w-full text-md flex items-center justify-center gap-2 bg-blue-600"
+                  >
+                    <div className="text-2xl">
+                      <IoLogoBitbucket />
+                    </div>
+                    Continue with Bitbucket
+                  </Button>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Soon...</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      </div>
+    </div>
   );
 };
 
