@@ -29,12 +29,15 @@ const LoginPage = () => {
             variant="outline"
             size="lg"
             type="button"
+            asChild
             className="w-full text-md flex items-center justify-center gap-2"
           >
-            <div className="text-2xl">
-              <AiFillGithub />
-            </div>
-            Continue with Github
+            <a className="cursor-pointer" href={`${import.meta.env.VITE_API_URL}/auth/github`}>
+              <div className="text-2xl">
+                <AiFillGithub />
+              </div>
+              Continue with Github
+            </a>
           </Button>
           <TooltipProvider delayDuration={0}>
             <Tooltip>

@@ -3,13 +3,14 @@ import { Octokit } from "@octokit/rest";
 import { inject, injectable } from "inversify";
 import { createAppAuth } from "@octokit/auth-app";
 
-import { BadRequestError } from "@/lib/errors";
+import { BadRequestError, NotFoundError } from "@/lib/errors";
 
 import { logger } from "@/config/logger";
 import { env } from "@/config/env";
 
 import { getZodErrors } from "@v1/shared/lib/zod";
 import { CONTAINER_TYPES } from "@v1/shared/container/types";
+import { UserRepository } from "@v1/shared/repositories/user.repository";
 
 import { UserGhIntegrationRepository } from "../repositories/user-gh-integration.repository";
 
@@ -21,13 +22,36 @@ import {
   SetupGithubIntegrationDTO,
   TSetupGithubIntegrationDTO,
 } from "../dtos/setup-gh-integration.dto";
+import { TGetUserDTO } from "../dtos/get-user.dto";
 
 @injectable()
 export class UserService {
   constructor(
+    @inject(CONTAINER_TYPES.UserRepository)
+    private userRepository: UserRepository,
     @inject(CONTAINER_TYPES.UserGhIntegrationRepository)
     private integrationRepository: UserGhIntegrationRepository
   ) {}
+
+  async getInformation(dto: TGetUserDTO) {
+    const validation = SetupGithubIntegrationDTO.safeParse(dto);
+
+    if (!validation.success)
+      throw new BadRequestError(getZodErrors(validation.error));
+
+    const { userId } = dto;
+
+    const user = await this.userRepository.getById(userId);
+
+    if (!user)
+      throw new NotFoundError(`Couldn't find a user with id ${userId}`);
+
+    return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+    };
+  }
 
   async setupGithubIntegration(dto: TSetupGithubIntegrationDTO): Promise<void> {
     const validation = SetupGithubIntegrationDTO.safeParse(dto);

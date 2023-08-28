@@ -12,6 +12,10 @@ const controller = container.get<UserController>(
   CONTAINER_TYPES.UserController
 );
 
+userRouter.get("/", verifyJwt, (req, res) =>
+  controller.getUserHandler(req, res)
+);
+
 userRouter.get("/repository/github/setup", (req, res) =>
   controller.setupGithubIntegrationHandler(req, res)
 );

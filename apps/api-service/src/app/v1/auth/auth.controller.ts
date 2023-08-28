@@ -5,6 +5,7 @@ import { BadRequestError } from "@/lib/errors";
 
 import { CONTAINER_TYPES } from "../shared/container/types";
 import { AuthService } from "./services/auth.service";
+import { env } from "@/config/env";
 
 @injectable()
 export class AuthController {
@@ -24,6 +25,6 @@ export class AuthController {
       ghUsername: ghProfile.username,
     });
 
-    res.send({ accessToken });
+    res.redirect(`${env.FRONTEND_URL}/login?token=${accessToken}`);
   }
 }

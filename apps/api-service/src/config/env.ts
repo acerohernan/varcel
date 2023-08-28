@@ -7,6 +7,7 @@ config({});
 
 const envSchema = z.object({
   PORT: z.preprocess(Number, z.number()),
+  FRONTEND_URL: z.string().nonempty(),
 
   JWT_SECRET: z.string().nonempty(),
   JWT_SESSION_DURATION_IN_SECONDS: z.preprocess(Number, z.number()),

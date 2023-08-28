@@ -14,6 +14,16 @@ export class UserController {
     @inject(CONTAINER_TYPES.UserService) private userService: UserService
   ) {}
 
+  async getUserHandler(req: Request, res: Response) {
+    const jwtUser: JWTUser = res.locals.user;
+
+    if (!jwtUser) throw new UnathorizedError("Invalid JWT");
+
+    const user = await this.userService.getInformation({ userId: jwtUser.id });
+
+    res.send({ user });
+  }
+
   async setupGithubIntegrationHandler(req: Request, res: Response) {
     const installationId = parseInt(req.query.installation_id as string);
     const code = req.query.code as string;
@@ -26,7 +36,7 @@ export class UserController {
   async getRepositoriesHandler(req: Request, res: Response) {
     const user: JWTUser = res.locals.user;
 
-    if (!user) throw new UnathorizedError("Token malformed");
+    if (!user) throw new UnathorizedError("Invalid JWT");
 
     const page = Number(req.query.page);
 

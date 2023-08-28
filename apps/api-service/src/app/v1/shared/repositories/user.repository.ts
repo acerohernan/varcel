@@ -12,6 +12,7 @@ import { users } from "@/db/schema/user";
 import { userGhIntegrations } from "@/db/schema/user/gh-integration";
 
 export interface IUserRepository {
+  getById: (id: string) => Promise<User | undefined>;
   getByEmail: (email: string) => Promise<User | undefined>;
   create: (user: User, ghIntegration: UserGhIntegration) => Promise<void>;
 }
@@ -19,6 +20,12 @@ export interface IUserRepository {
 @injectable()
 export class UserRepository implements IUserRepository {
   constructor() {}
+
+  async getById(id: string) {
+    return db.query.users.findFirst({
+      where: eq(users.id, id),
+    });
+  }
 
   async getByEmail(email: string) {
     return db.query.users.findFirst({
