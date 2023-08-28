@@ -22,7 +22,7 @@ import {
   SetupGithubIntegrationDTO,
   TSetupGithubIntegrationDTO,
 } from "../dtos/setup-gh-integration.dto";
-import { TGetUserDTO } from "../dtos/get-user.dto";
+import { GetUserDTO, TGetUserDTO } from "../dtos/get-user.dto";
 
 @injectable()
 export class UserService {
@@ -34,7 +34,7 @@ export class UserService {
   ) {}
 
   async getInformation(dto: TGetUserDTO) {
-    const validation = SetupGithubIntegrationDTO.safeParse(dto);
+    const validation = GetUserDTO.safeParse(dto);
 
     if (!validation.success)
       throw new BadRequestError(getZodErrors(validation.error));

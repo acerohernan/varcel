@@ -1,23 +1,29 @@
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useEffect, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { AiFillGithub } from "react-icons/ai";
 import { FaGitlab } from "react-icons/fa";
 import { IoLogoBitbucket } from "react-icons/io";
-import { useNavigate, useSearchParams } from "react-router-dom";
 
-const LoginPage = () => {
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+import { useAuthContext } from "@/context/auth";
+import { TOKEN_KEY } from "@/context/auth/constants";
+
+export const LoginPage = () => {
   const [params] = useSearchParams();
+  const {
+    actions: { saveToken },
+  } = useAuthContext();
   const navigate = useNavigate();
 
-  const token: string | null = useMemo(() => params.get("token"), [params]);
+  const token: string | null = useMemo(() => params.get(TOKEN_KEY), [params]);
 
   useEffect(() => {
     if (!token) return;
 
-    localStorage.setItem("token", token);
-
-    navigate("/");
+    // If there's a token in query params, save it
+    saveToken(token);
   }, [navigate, token]);
 
   return (
@@ -90,5 +96,3 @@ const LoginPage = () => {
     </div>
   );
 };
-
-export default LoginPage;
