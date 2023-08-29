@@ -1,10 +1,23 @@
-import { useToast } from "@/components/ui/use-toast";
-import { useAuthContext } from "@/context/auth";
-import { useUser } from "@/hooks/query/useUser";
-import { useEffect } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AiFillGithub } from "react-icons/ai";
+import { useEffect, useState } from "react";
+import { BiSearch } from "react-icons/bi";
 import { LuGitBranch } from "react-icons/lu";
+import { RiCloseCircleLine } from "react-icons/ri";
+import { AiFillGithub, AiOutlinePlus } from "react-icons/ai";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  DropdownMenuContent,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { useAuthContext } from "@/context/auth";
+
+import { useUser } from "@/hooks/query/useUser";
 
 export const HomePage = () => {
   const { data: user, isLoading, isError } = useUser();
@@ -12,6 +25,8 @@ export const HomePage = () => {
     actions: { logout },
   } = useAuthContext();
   const { toast } = useToast();
+
+  const [value, setValue] = useState("");
 
   useEffect(() => {
     if (isLoading) return;
@@ -32,6 +47,40 @@ export const HomePage = () => {
 
   return (
     <div className="w-full max-w-[1200px] p-4 mx-auto">
+      <div className="mb-4 flex items-center gap-4">
+        <Input
+          type="text"
+          placeholder="Search..."
+          className="px-10"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          leftIcon={
+            <div className="text-muted-foreground text-lg">
+              <BiSearch />
+            </div>
+          }
+          rightIcon={
+            value !== "" ? (
+              <button className="text-muted-foreground text-lg hover:text-white" onClick={() => setValue("")}>
+                <RiCloseCircleLine />
+              </button>
+            ) : null
+          }
+        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="icon" className="text-lg flex-shrink-0">
+              <AiOutlinePlus />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-white dark:bg-black">
+            <DropdownMenuItem className="px-3">Project</DropdownMenuItem>
+            <DropdownMenuItem className="px-3">Domain</DropdownMenuItem>
+            <DropdownMenuItem className="px-3">Storage</DropdownMenuItem>
+            <DropdownMenuItem className="px-3">Team</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {Array(9)
           .fill(0)

@@ -3,8 +3,6 @@ import { FiSun } from "react-icons/fi";
 import { HiMenuAlt4 } from "react-icons/hi";
 import { MdDone } from "react-icons/md";
 
-import { Button } from "./ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { useTheme } from "@/theme/provider";
+
+import { Button } from "./ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -35,13 +37,13 @@ export const Navbar = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-white dark:bg-black">
-            <DropdownMenuItem className="p-2" onClick={() => setTheme("light")}>
+            <DropdownMenuItem className="px-3" onClick={() => setTheme("light")}>
               Light
             </DropdownMenuItem>
-            <DropdownMenuItem className="p-2" onClick={() => setTheme("dark")}>
+            <DropdownMenuItem className="px-3" onClick={() => setTheme("dark")}>
               Dark
             </DropdownMenuItem>
-            <DropdownMenuItem className="p-2" onClick={() => setTheme("system")}>
+            <DropdownMenuItem className="px-3" onClick={() => setTheme("system")}>
               System
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -52,7 +54,7 @@ export const Navbar = () => {
               <BiBell />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="mr-6 bg-white dark:bg-black">
+          <DropdownMenuContent className="mr-[70px] bg-white dark:bg-black">
             <div>
               <div className="flex items-center gap-4 px-4 py-2 border-b dark:border-slate-800">
                 <div className="text-green-500 p-1 rounded-full border border-green-500">
