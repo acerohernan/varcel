@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { TOKEN_KEY, AUTH_ROUTES, PUBLIC_ROUTES } from "./constants";
 import { AuthContext } from "./index";
+import { Navbar } from "@/components/navbar";
 
 export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const { pathname } = useLocation();
@@ -34,5 +35,10 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   const actions = { saveToken, logout };
 
-  return <AuthContext.Provider value={{ actions }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ actions }}>
+      {isPrivateRoute ? <Navbar /> : null}
+      {children}
+    </AuthContext.Provider>
+  );
 };

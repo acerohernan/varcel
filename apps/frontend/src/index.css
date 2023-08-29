@@ -36,7 +36,7 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 222.2 84% 0%;
     --foreground: 210 40% 98%;
 
     --card: 222.2 84% 4.9%;
@@ -71,6 +71,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    font-family: "Inter", sans-serif;
+    @apply bg-white_secondary dark:bg-black_secondary text-foreground;
   }
 }
