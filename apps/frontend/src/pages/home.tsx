@@ -18,6 +18,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useAuthContext } from "@/context/auth";
 
 import { useUser } from "@/hooks/query/useUser";
+import { useNavigate } from "react-router-dom";
 
 export const HomePage = () => {
   const { data: user, isLoading, isError } = useUser();
@@ -25,6 +26,7 @@ export const HomePage = () => {
     actions: { logout },
   } = useAuthContext();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [value, setValue] = useState("");
 
@@ -74,7 +76,9 @@ export const HomePage = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-white dark:bg-black">
-            <DropdownMenuItem className="px-3">Project</DropdownMenuItem>
+            <DropdownMenuItem className="px-3" onClick={() => navigate("/new")}>
+              Project
+            </DropdownMenuItem>
             <DropdownMenuItem className="px-3">Domain</DropdownMenuItem>
             <DropdownMenuItem className="px-3">Storage</DropdownMenuItem>
             <DropdownMenuItem className="px-3">Team</DropdownMenuItem>

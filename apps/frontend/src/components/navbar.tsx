@@ -16,6 +16,7 @@ import { useTheme } from "@/theme/provider";
 
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Link } from "react-router-dom";
 
 export const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -23,10 +24,12 @@ export const Navbar = () => {
   return (
     <div className="bg-white dark:bg-black flex items-center justify-between border px-6 py-2">
       <div className="flex items-center gap-2">
-        <Avatar className="h-6 w-6">
-          <AvatarImage src="https://vercel.com/api/www/avatar?u=acerohernan&s=44" />
-          <AvatarFallback>HA</AvatarFallback>
-        </Avatar>
+        <Link to="/">
+          <Avatar className="h-6 w-6">
+            <AvatarImage src="https://vercel.com/api/www/avatar?u=acerohernan&s=44" />
+            <AvatarFallback>HA</AvatarFallback>
+          </Avatar>
+        </Link>
         <span className="font-light text-sm">acerohernan</span>
       </div>
       <div className="flex items-center gap-1">
