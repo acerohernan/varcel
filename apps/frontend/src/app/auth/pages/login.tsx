@@ -7,8 +7,8 @@ import { IoLogoBitbucket } from "react-icons/io";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-import { useAuthContext } from "@/context/auth";
-import { TOKEN_KEY } from "@/context/auth/constants";
+import { useAuthContext } from "../context";
+import { TOKEN_KEY } from "../context/constants";
 
 export const LoginPage = () => {
   const [params] = useSearchParams();

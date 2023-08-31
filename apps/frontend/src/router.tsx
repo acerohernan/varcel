@@ -1,11 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { HomePage } from "./pages/home";
-import { LoginPage } from "./pages/auth/login";
-import { NotFoundPage } from "./pages/404";
+import { LoginPage } from "@/app/auth/pages/login";
+
+import { HomePage } from "@/app/shared/pages/home";
+import { NotFoundPage } from "@/app/shared/pages/404";
+
+import { NewProjectPage } from "@/app/project/pages/new";
 
 import Provider from "./provider";
-import { NewProjectPage } from "./pages/project/new";
 
 export const router = createBrowserRouter([
   {

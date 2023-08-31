@@ -1,4 +1,5 @@
-import { TOKEN_KEY } from "@/context/auth/constants";
+
+import { TOKEN_KEY } from "@/app/auth/context/constants";
 import { axiosInstance } from "../config";
 
 const headers = () => ({

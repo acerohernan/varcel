@@ -15,10 +15,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { useAuthContext } from "@/context/auth";
-
 import { useUser } from "@/hooks/query/useUser";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "@/app/auth/context";
 
 export const HomePage = () => {
   const { data: user, isLoading, isError } = useUser();

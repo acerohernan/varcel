@@ -1,9 +1,10 @@
 import { PropsWithChildren, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { Navbar } from "@/components/navbar";
+
 import { TOKEN_KEY, AUTH_ROUTES, PUBLIC_ROUTES } from "./constants";
 import { AuthContext } from "./index";
-import { Navbar } from "@/components/navbar";
 
 export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const { pathname } = useLocation();
