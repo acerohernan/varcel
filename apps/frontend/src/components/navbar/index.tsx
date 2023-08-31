@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export const Navbar = () => {
   return (
-    <div className="bg-white dark:bg-black flex items-center justify-between border px-6 py-2">
+    <div className="bg-white dark:bg-black flex items-center justify-between px-6 py-2">
       <div className="flex items-center gap-2">
         <Link to="/">
           <Avatar className="h-6 w-6">
