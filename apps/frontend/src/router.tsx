@@ -1,11 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { LoginPage } from "@/app/auth/pages/login";
+import { LoginPage } from "./app/auth/pages/login";
+import { SignUpPage } from "./app/auth/pages/signup";
 
-import { HomePage } from "@/app/shared/pages/home";
-import { NotFoundPage } from "@/app/shared/pages/404";
+import { HomePage } from "./app/shared/pages/home";
+import { NotFoundPage } from "./app/shared/pages/404";
 
-import { NewProjectPage } from "@/app/project/pages/new";
+import { NewProjectPage } from "./app/project/pages/new";
 
 import Provider from "./provider";
 
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
       {
         path: "login",
         element: <LoginPage />,
+      },
+      {
+        path: "signup",
+        element: <SignUpPage />,
       },
       {
         path: "*",
