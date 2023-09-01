@@ -8,6 +8,7 @@ import { AccountSelector } from "./account-selector";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 export const ImportRepositoryCard = () => {
   const [value, setValue] = useState("");
@@ -56,7 +57,9 @@ export const ImportRepositoryCard = () => {
                   </div>
                   <span className="font-light text-sm">ts-vercel-clone</span>
                 </div>
-                <Button>Import</Button>
+                <Button asChild>
+                  <Link to="/new/import">Import</Link>
+                </Button>
               </div>
             ))}
         </Card>

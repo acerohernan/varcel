@@ -7,6 +7,7 @@ import { HomePage } from "./app/shared/pages/home";
 import { NotFoundPage } from "./app/shared/pages/404";
 
 import { NewProjectPage } from "./app/project/pages/new";
+import { ImportProjectPage } from "./app/project/pages/import";
 
 import Provider from "./provider";
 
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
       {
         path: "new",
         element: <NewProjectPage />,
+      },
+      {
+        path: "new/import",
+        element: <ImportProjectPage />,
       },
       {
         path: "login",
