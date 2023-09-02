@@ -1,14 +1,26 @@
 import { FiExternalLink } from "react-icons/fi";
-import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
+
 import { LuGitBranch, LuGitCommit } from "react-icons/lu";
+import { MdContentCopy } from "react-icons/md";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 import deploymentScreenshootSrc from "@/assets/images/deployment-screenshoot.png";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { BiCheck } from "react-icons/bi";
+import { DeploymentMenu } from "../components/deployment-menu";
+
+const buildLogs = Array(8).fill({
+  timestamp: Date.now(),
+  message: "Cloning github.com/acerohernan/aws-clone (Branch: master, Commit: 75afcac)",
+}) as Array<{ timestamp: number; message: string }>;
 
 export const DeploymentPage = () => {
   const projectName = "aws-clone";
+
+  const [logsType, setLogsType] = useState<"all" | "error" | "warn">("all");
 
   return (
     <div>
@@ -23,14 +35,11 @@ export const DeploymentPage = () => {
                   className="rounded-md border object-cover w-full md:min-h-[250px]"
                 />
                 <div className="flex gap-4 mt-4 lg:mt-0 lg:absolute top-0 right-0">
-                  <Button size="icon" variant="outline">
-                    <PiDotsThreeOutlineVerticalFill />
-                  </Button>
-                  <Button className="w-[150px]">Visit</Button>
+                  <DeploymentMenu />
                 </div>
               </div>
               <div className="flex flex-col gap-4 text-sm">
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 grid-cols-2 lg:grid-cols-3">
                   <div>
                     <span className="block font-light text-muted-foreground">Status</span>
                     <p className="flex gap-2 items-center mt-1">
@@ -80,26 +89,68 @@ export const DeploymentPage = () => {
           </div>
         </div>
       </div>
-      <div className="bg-background border-b h-full">
+      <div className="h-full">
         <div className="max-w-[1200px] mx-auto px-8 py-12">
           <h1 className="text-2xl font-medium">Deployment Details</h1>
-          <div className="grid gap-4 mt-4 mb-8">
-            <Accordion type="multiple">
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="text-muted-foreground">Building</AccordionTrigger>
-                <AccordionContent></AccordionContent>
+          <div className="grid gap-4 mt-4">
+            <Accordion type="multiple" className="bg-background" defaultValue={["item-1", "item-2"]}>
+              <AccordionItem value="item-1" className="p-0">
+                <AccordionTrigger className="text-muted-foreground px-4">Building</AccordionTrigger>
+                <AccordionContent>
+                  <div className="relative border-t pt-4">
+                    <div className="w-full flex gap-2 px-4">
+                      <button onClick={() => setLogsType("all")}>
+                        <Badge className="cursor-pointer" variant={logsType === "all" ? "default" : "secondary"}>
+                          All Logs (37)
+                        </Badge>
+                      </button>
+                      <button onClick={() => setLogsType("error")}>
+                        <Badge className="cursor-pointer" variant={logsType === "error" ? "default" : "secondary"}>
+                          Errors (0)
+                        </Badge>
+                      </button>
+                      <button onClick={() => setLogsType("warn")}>
+                        <Badge className="cursor-pointer" variant={logsType === "warn" ? "default" : "secondary"}>
+                          Warnings (0)
+                        </Badge>
+                      </button>
+                    </div>
+                    <Button size="icon" variant="outline" className="text-lg absolute right-4 top-4">
+                      <MdContentCopy />
+                    </Button>
+                    <div className="mt-4 grid">
+                      {buildLogs.map((log) => {
+                        return (
+                          <div key={Math.random()} className="flex gap-2 font-light px-4 py-1 hover:bg-accent">
+                            <span>10:10:39</span>
+                            <p>{log.message}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </AccordionContent>
               </AccordionItem>
-              <AccordionItem value="item-2">
-                <AccordionTrigger className="text-muted-foreground">Deployment summary</AccordionTrigger>
-                <AccordionContent></AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-3">
-                <AccordionTrigger className="text-muted-foreground">Running checks</AccordionTrigger>
-                <AccordionContent></AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-4">
-                <AccordionTrigger className="text-muted-foreground">Assigning Domains</AccordionTrigger>
-                <AccordionContent></AccordionContent>
+              <AccordionItem value="item-2" className="p-0">
+                <AccordionTrigger className="text-muted-foreground px-4">Assigning Domains</AccordionTrigger>
+                <AccordionContent>
+                  <div className="border-t">
+                    <div className="pt-4 px-4">
+                      <div className="flex gap-4 items-center justify-between">
+                        <div className="flex gap-2">
+                          <div className="bg-blue-500 rounded-full p-1 text-lg">
+                            <BiCheck />
+                          </div>
+                          <span className="flex items-center gap-1 hover:underline text-blue-400 cursor-pointer">
+                            aws-clone.vercel.app
+                            <FiExternalLink />
+                          </span>
+                        </div>
+                        <div className="block text-muted-foreground text-end">Custom Domain</div>
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
               </AccordionItem>
             </Accordion>
           </div>
