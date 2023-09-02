@@ -35,7 +35,7 @@ export const ImportRepositoryCard = () => {
               }
               rightIcon={
                 value !== "" ? (
-                  <button className="text-muted-foreground text-lg hover:text-white" onClick={() => setValue("")}>
+                  <button className="text-muted-foreground text-lg hover:text-foreground" onClick={() => setValue("")}>
                     <RiCloseCircleLine />
                   </button>
                 ) : null

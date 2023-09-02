@@ -192,7 +192,9 @@ export const ConfigureProjectCard = () => {
                 </AccordionItem>
               </Accordion>
             </div>
-            <Button type="submit">Deploy</Button>
+            <Button type="submit" className="mt-2">
+              Deploy
+            </Button>
           </form>
         </Form>
       </CardContent>
