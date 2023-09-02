@@ -10,7 +10,7 @@ import { DeployProjectCard } from "../components/deploy-project";
 export const ImportProjectPage = () => {
   return (
     <div className="relative">
-      <div className="bg-white dark:bg-black absolute w-full top-0 h-[300px] lg:h-[260px] z-0 border-b" />
+      <div className="bg-white dark:bg-black absolute w-full top-0 h-[320px] lg:h-[280px] z-0 border-b" />
       <div className="p-8 max-w-[1200px] mx-auto relative z-10">
         <Link to="/new">
           <div className="flex items-center text-sm gap-1 text-muted-foreground hover:underline cursor-pointer mb-4">

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
+import { index, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 
 import { primaryKeys, timestamps } from "@/db/utils";
 
@@ -9,14 +9,22 @@ import { projectEnvVariables } from "./env-variables";
 import { users } from "../user";
 import { deployments } from "../deployment";
 
-export const projects = pgTable("projects", {
-  ...primaryKeys,
-  ...timestamps,
-  userId: uuid("user_id"),
-  name: varchar("name"),
-  subdomain: varchar("subdomain").unique(),
-  framework: varchar("framework").unique(),
-});
+export const projects = pgTable(
+  "projects",
+  {
+    ...primaryKeys,
+    ...timestamps,
+    userId: uuid("user_id"),
+    name: varchar("name"),
+    subdomain: varchar("subdomain").unique(),
+    framework: varchar("framework").unique(),
+  },
+  (table) => {
+    return {
+      nameIdx: index("name_idx").on(table.name),
+    };
+  }
+);
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
   user: one(users, {

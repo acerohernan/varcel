@@ -8,6 +8,9 @@ import { NotFoundPage } from "./app/shared/pages/404";
 
 import { NewProjectPage } from "./app/project/pages/new";
 import { ImportProjectPage } from "./app/project/pages/import";
+import { ProjectPage } from "./app/project/pages/project";
+import { AllDeploymentsPage } from "./app/project/pages/all-deployments";
+import { DeploymentPage } from "./app/project/pages/deployment";
 
 import Provider from "./provider";
 
@@ -21,6 +24,14 @@ export const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
+        path: "login",
+        element: <LoginPage />,
+      },
+      {
+        path: "signup",
+        element: <SignUpPage />,
+      },
+      {
         path: "new",
         element: <NewProjectPage />,
       },
@@ -29,12 +40,16 @@ export const router = createBrowserRouter([
         element: <ImportProjectPage />,
       },
       {
-        path: "login",
-        element: <LoginPage />,
+        path: "projects/:projectName",
+        element: <ProjectPage />,
       },
       {
-        path: "signup",
-        element: <SignUpPage />,
+        path: "projects/:projectName/deployments",
+        element: <AllDeploymentsPage />,
+      },
+      {
+        path: "projects/:projectName/deployments/:deploymentId",
+        element: <DeploymentPage />,
       },
       {
         path: "*",
