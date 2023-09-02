@@ -120,7 +120,7 @@ export const ConfigureProjectCard = () => {
               )}
             />
             <div className="grid gap-4">
-              <Accordion type="single" collapsible>
+              <Accordion type="multiple">
                 <AccordionItem value="item-1">
                   <AccordionTrigger>Build and Output Settings</AccordionTrigger>
                   <AccordionContent>
@@ -164,8 +164,6 @@ export const ConfigureProjectCard = () => {
                     </div>
                   </AccordionContent>
                 </AccordionItem>
-              </Accordion>
-              <Accordion type="single" collapsible>
                 <AccordionItem value="item-2">
                   <AccordionTrigger>Environment Variables</AccordionTrigger>
                   <AccordionContent>

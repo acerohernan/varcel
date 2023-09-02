@@ -14,26 +14,20 @@ export const DeployProjectCard = () => {
         <div>
           <span className="text-sm text-muted-foreground">Preparing deployment...</span>
           <div className="grid gap-4 mt-4 mb-8">
-            <Accordion type="single" collapsible>
+            <Accordion type="multiple">
               <AccordionItem value="item-1">
                 <AccordionTrigger>Building</AccordionTrigger>
                 <AccordionContent></AccordionContent>
               </AccordionItem>
-            </Accordion>
-            <Accordion type="single" collapsible>
               <AccordionItem value="item-2">
                 <AccordionTrigger>Deployment summary</AccordionTrigger>
                 <AccordionContent></AccordionContent>
               </AccordionItem>
-            </Accordion>
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-2">
+              <AccordionItem value="item-3">
                 <AccordionTrigger>Running checks</AccordionTrigger>
                 <AccordionContent></AccordionContent>
               </AccordionItem>
-            </Accordion>
-            <Accordion type="single" collapsible>
-              <AccordionItem value="item-2">
+              <AccordionItem value="item-4">
                 <AccordionTrigger>Assigning Domains</AccordionTrigger>
                 <AccordionContent></AccordionContent>
               </AccordionItem>
