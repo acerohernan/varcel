@@ -1,18 +1,18 @@
 import { PropsWithChildren, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { Navbar } from "@/components/navbar";
+import { AUTH_ROUTES, PUBLIC_ROUTES, ROUTES } from "@/lib/routes";
 
-import { TOKEN_KEY, AUTH_ROUTES, PUBLIC_ROUTES } from "./constants";
+import { TOKEN_KEY } from "./constants";
 import { AuthContext } from "./index";
 
 export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+  const isPublicRoute = PUBLIC_ROUTES.includes(pathname as ROUTES);
   const isPrivateRoute = !isPublicRoute;
-  const isAuthRoute = AUTH_ROUTES.includes(pathname);
+  const isAuthRoute = AUTH_ROUTES.includes(pathname as ROUTES);
 
   const accessToken = localStorage.getItem(TOKEN_KEY);
 
@@ -36,10 +36,5 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   const actions = { saveToken, logout };
 
-  return (
-    <AuthContext.Provider value={{ actions }}>
-      {isPrivateRoute ? <Navbar /> : null}
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ actions }}>{children}</AuthContext.Provider>;
 };

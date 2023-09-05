@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/app/auth/context/provider";
 
 import { Toaster } from "./components/ui/toaster";
+import { UILayout } from "./components/layout";
 
 import { ThemeProvider } from "./theme/provider";
 
@@ -15,7 +16,9 @@ const Provider = () => {
       <Toaster />
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <Outlet />
+          <UILayout>
+            <Outlet />
+          </UILayout>
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>

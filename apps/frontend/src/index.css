@@ -75,3 +75,7 @@
     @apply bg-white_secondary dark:bg-black_secondary text-foreground;
   }
 }
+
+.bg-background-secondary {
+  @apply bg-white_secondary dark:bg-black_secondary;
+}
