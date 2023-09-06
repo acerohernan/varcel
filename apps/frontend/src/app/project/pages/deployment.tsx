@@ -36,6 +36,7 @@ export const DeploymentPage = () => {
                 />
                 <div className="flex gap-4 mt-4 lg:mt-0 lg:absolute top-0 right-0">
                   <DeploymentMenu />
+                  <Button className="w-[150px]">Visit</Button>
                 </div>
               </div>
               <div className="flex flex-col gap-4 text-sm">
