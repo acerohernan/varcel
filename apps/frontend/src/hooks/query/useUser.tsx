@@ -8,7 +8,7 @@ export const useUser = () =>
     queryFn: async () => {
       try {
         const response = await API.user.getUser();
-        return response.data as IUser;
+        return response.data.user as IUser;
       } catch (error: any) {
         throw new Error(error);
       }

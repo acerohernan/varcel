@@ -1,40 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { RiCloseCircleLine } from "react-icons/ri";
 
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
 
-import { useUser } from "@/hooks/query/useUser";
-import { useAuthContext } from "@/app/auth/context";
 import { ProjectCard } from "../components/project-card";
 import { AddResourceMenu } from "../components/add-resource-menu";
+import { useProjects } from "@/hooks/query/useProjects";
 
 export const HomePage = () => {
-  const { data: user, isLoading, isError } = useUser();
-  const {
-    actions: { logout },
-  } = useAuthContext();
-  const { toast } = useToast();
+  //const { data: projects, isLoading, isError } = useProjects();
 
   const [value, setValue] = useState("");
 
-  useEffect(() => {
-    if (isLoading) return;
+  // TODO: Loader
+  /*  if (isLoading) return <h1>Loading...</h1>; */
 
-    // If there's an error retrieving the user, notify and remove their credentials
-    if (isError || !user) {
-      toast({
-        title: "Uh oh! Something went wrong.",
-        description: "Your credentials are expired or invalid! Please log in again.",
-        variant: "destructive",
-      });
-
-      logout();
-    }
-  });
-
-  /*   if (isLoading) return <h1>Loading...</h1>; */
+  // TODO: Error product page
+  /*  if (isError) return <h1>Loading...</h1>; */
 
   return (
     <div className="border-t">

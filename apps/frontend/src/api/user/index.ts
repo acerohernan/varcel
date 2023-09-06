@@ -1,9 +1,5 @@
+import { authHeaders, axiosInstance } from "../config";
 
-import { TOKEN_KEY } from "@/app/auth/context/constants";
-import { axiosInstance } from "../config";
-
-const headers = () => ({
-  Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}`,
-});
-
-export const getUser = () => axiosInstance.get("/user", { headers: headers() });
+export function getUser() {
+  return axiosInstance.get("/user", { headers: authHeaders() });
+}

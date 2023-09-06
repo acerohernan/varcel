@@ -12,11 +12,15 @@ import {
 import { useAuthContext } from "@/app/auth/context";
 
 import { Button } from "../ui/button";
+import { useUser } from "@/hooks/query/useUser";
 
 export const MainMenu = () => {
+  const { data: user } = useUser();
   const {
     actions: { logout },
   } = useAuthContext();
+
+  if (!user) return null;
 
   return (
     <DropdownMenu>
@@ -27,7 +31,7 @@ export const MainMenu = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-6 bg-white dark:bg-black">
         <DropdownMenuLabel>
-          <span className="block dark:text-slate-300 font-light p-2 w-[300px]">contacto.acero.hernan@gmail.com</span>
+          <span className="block dark:text-slate-300 font-light p-2 w-[300px]">{user.email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="px-4 py-2 font-light cursor-pointer">Dashboard</DropdownMenuItem>
