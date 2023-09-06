@@ -13,10 +13,12 @@ import { CONTAINER_TYPES } from "@v1/shared/container/types";
 import { getZodErrors } from "@v1/shared/lib/zod";
 
 import { ProjectRepository } from "../repositories/project.repository";
+
 import {
   CreateProjectDTO,
   TCreateProjectDTO,
 } from "../dtos/create-project.dto";
+import { GetProjectsDTO, TGetProjectsDTO } from "../dtos/get-projects.dto";
 
 @injectable()
 export class ProjectService {
@@ -24,6 +26,17 @@ export class ProjectService {
     @inject(CONTAINER_TYPES.ProjectRepository)
     private projectRepository: ProjectRepository
   ) {}
+
+  async getAll(
+    dto: TGetProjectsDTO
+  ): Promise<{ projects: any[]; totalCount: number }> {
+    const validation = GetProjectsDTO.safeParse(dto);
+
+    if (!validation.success)
+      throw new BadRequestError(getZodErrors(validation.error));
+
+    return { projects: [], totalCount: 0 };
+  }
 
   async create(dto: TCreateProjectDTO): Promise<void> {
     const validation = CreateProjectDTO.safeParse(dto);

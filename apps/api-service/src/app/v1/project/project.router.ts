@@ -12,6 +12,10 @@ const controller = container.get<ProjectController>(
   CONTAINER_TYPES.ProjectController
 );
 
+projectRouter.get("/", verifyJwt, (req, res) =>
+  controller.getProjects(req, res)
+);
+
 projectRouter.post("/", verifyJwt, (req, res) =>
   controller.createProjectHandler(req, res)
 );
