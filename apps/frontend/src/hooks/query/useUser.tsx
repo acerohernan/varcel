@@ -14,4 +14,5 @@ export const useUser = () =>
       }
     },
     retry: 1,
+    refetchInterval: false,
   });

@@ -47,7 +47,7 @@ export const UILayout: React.FC<PropsWithChildren> = ({ children }) => {
   }, [pathname]);
 
   return (
-    <div>
+    <div id="layout-div">
       {isPrivateRoute ? <Navbar /> : null}
       {isProjectRoute ? <ProjectTabs /> : null}
       {isDeploymentRoute ? <DeploymentTabs /> : null}
