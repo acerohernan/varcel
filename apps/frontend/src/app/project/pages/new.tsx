@@ -1,4 +1,4 @@
-import { ImportRepositoryCard } from "../components/import-repository";
+import { ImportRepositoryCardSkeleton } from "../components/import-repository/skeleton";
 
 export const NewProjectPage = () => {
   return (
@@ -9,7 +9,8 @@ export const NewProjectPage = () => {
         <p className="text-muted-foreground mt-2 mb-12">
           To deploy a new Project, import an existing Git Repository or get started with one of our Templates.
         </p>
-        <ImportRepositoryCard />
+        {/* <ImportRepositoryCard /> */}
+        <ImportRepositoryCardSkeleton />
       </div>
     </div>
   );
