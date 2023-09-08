@@ -8,6 +8,7 @@ import { CONTAINER_TYPES } from "@v1/shared/container/types";
 import { IPaginatedMetadata } from "@v1/shared/lib/response";
 
 import { UserService } from "./services/user.service";
+import { env } from "@/config/env";
 @injectable()
 export class UserController {
   constructor(
@@ -30,7 +31,7 @@ export class UserController {
 
     await this.userService.setupGithubIntegration({ code, installationId });
 
-    res.sendStatus(200);
+    res.redirect(`${env.FRONTEND_URL}/new`);
   }
 
   async getRepositoriesHandler(req: Request, res: Response) {
@@ -38,7 +39,7 @@ export class UserController {
 
     if (!user) throw new UnathorizedError("Invalid JWT");
 
-    const page = Number(req.query.page);
+    const page = Number(req.query.page) > 1 ? Number(req.query.page) : 1;
 
     // Allow only query 5 repositories at time
     const perPage = 5;
