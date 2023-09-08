@@ -9,9 +9,17 @@ import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import { useRepositories } from "@/hooks/query/useGitRepositories";
+import { ImportRepositoryCardSkeleton } from "./skeleton";
 
 export const ImportRepositoryCard = () => {
+  const { data: repositories, isLoading, isError } = useRepositories();
+
   const [value, setValue] = useState("");
+
+  if (isLoading) return <ImportRepositoryCardSkeleton />;
+
+  if (isError) return <h1>Error hapenning!</h1>;
 
   return (
     <Card className="w-full max-w-[800px] mx-auto bg-background">
@@ -44,24 +52,28 @@ export const ImportRepositoryCard = () => {
           </div>
         </div>
         <Card className="dark:bg-black mt-4">
-          {Array(5)
-            .fill(0)
-            .map((_, index) => (
-              <div
-                className={cn("p-4 flex items-center justify-between", index !== 4 && "border-b")}
-                key={Math.random()}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="text-xl text-muted-foreground">
-                    <AiOutlineQuestionCircle />
-                  </div>
-                  <span className="font-light text-sm">ts-vercel-clone</span>
+          {repositories.length === 0 ? (
+            <div className="h-[400px] w-full flex items-center justify-center p-8">
+              <h4>Sorry, you don't have a configured repository! Please install our github app!</h4>
+            </div>
+          ) : null}
+
+          {repositories.map((repo, index) => (
+            <div
+              className={cn("p-4 flex items-center justify-between", index !== repositories.length - 1 && "border-b")}
+              key={Math.random()}
+            >
+              <div className="flex items-center gap-4">
+                <div className="text-xl text-muted-foreground">
+                  <AiOutlineQuestionCircle />
                 </div>
-                <Button asChild>
-                  <Link to="/new/import">Import</Link>
-                </Button>
+                <span className="font-light text-sm">{repo.name}</span>
               </div>
-            ))}
+              <Button asChild>
+                <Link to={`/new/import?repository=${repo.url}`}>Import</Link>
+              </Button>
+            </div>
+          ))}
         </Card>
       </CardContent>
     </Card>

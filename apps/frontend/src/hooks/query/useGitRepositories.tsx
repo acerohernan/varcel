@@ -15,5 +15,4 @@ export const useRepositories = () =>
       }
     },
     retry: 1,
-    refetchInterval: false,
   });
