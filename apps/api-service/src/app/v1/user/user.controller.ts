@@ -1,14 +1,16 @@
 import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 
-import { UnathorizedError } from "@/lib/errors";
+import { env } from "@/config/env";
+
+import { BadRequestError, UnathorizedError } from "@/lib/errors";
 
 import { JWTUser } from "@v1/shared/middlewares/verifyJwt";
 import { CONTAINER_TYPES } from "@v1/shared/container/types";
 import { IPaginatedMetadata } from "@v1/shared/lib/response";
 
 import { UserService } from "./services/user.service";
-import { env } from "@/config/env";
+
 @injectable()
 export class UserController {
   constructor(
@@ -62,5 +64,26 @@ export class UserController {
       repositories,
       metadata,
     });
+  }
+
+  async getRepositoryHandler(req: Request, res: Response) {
+    const user: JWTUser = res.locals.user;
+
+    if (!user) throw new UnathorizedError("Invalid JWT");
+
+    const repoUrl = req.query.url;
+
+    if (!repoUrl || typeof repoUrl !== "string")
+      throw new BadRequestError(`The query parameter repository is required`);
+
+    const [repoName, repoOwner] = repoUrl.split("/").reverse();
+
+    const repository = await this.userService.getRepository({
+      userId: user.id,
+      repoName,
+      repoOwner,
+    });
+
+    res.send({ repository });
   }
 }

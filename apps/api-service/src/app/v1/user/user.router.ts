@@ -23,3 +23,7 @@ userRouter.get("/repository/github/setup", (req, res) =>
 userRouter.get("/repository", verifyJwt, (req, res) =>
   controller.getRepositoriesHandler(req, res)
 );
+
+userRouter.get("/get-repo", verifyJwt, (req, res) =>
+  controller.getRepositoryHandler(req, res)
+);

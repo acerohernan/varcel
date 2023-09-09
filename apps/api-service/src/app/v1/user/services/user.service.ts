@@ -23,6 +23,11 @@ import {
   TSetupGithubIntegrationDTO,
 } from "../dtos/setup-gh-integration.dto";
 import { GetUserDTO, TGetUserDTO } from "../dtos/get-user.dto";
+import {
+  GetRepositoryDTO,
+  TGetRepositoryDTO,
+} from "../dtos/get-repository.dto";
+import { GithubService } from "@v1/shared/services/github.service";
 
 @injectable()
 export class UserService {
@@ -30,7 +35,9 @@ export class UserService {
     @inject(CONTAINER_TYPES.UserRepository)
     private userRepository: UserRepository,
     @inject(CONTAINER_TYPES.UserGhIntegrationRepository)
-    private integrationRepository: UserGhIntegrationRepository
+    private integrationRepository: UserGhIntegrationRepository,
+    @inject(CONTAINER_TYPES.GithubService)
+    private githubService: GithubService
   ) {}
 
   async getInformation(dto: TGetUserDTO) {
@@ -140,5 +147,43 @@ export class UserService {
       console.error(error);
       return { repositories: [], totalCount: 0 };
     }
+  }
+
+  async getRepository(dto: TGetRepositoryDTO) {
+    const validation = GetRepositoryDTO.safeParse(dto);
+
+    if (!validation.success)
+      throw new BadRequestError(getZodErrors(validation.error));
+
+    const { userId, repoOwner, repoName } = dto;
+
+    const ghIntegration = await this.integrationRepository.getByUserId(userId);
+
+    if (!ghIntegration || !ghIntegration.ghInstallationId)
+      throw new BadRequestError(
+        `You don't have a github integration settuped!`
+      );
+
+    const { ghInstallationId } = ghIntegration;
+
+    const token = await this.githubService.createTokenFromInstallationId({
+      installationId: ghInstallationId,
+    });
+
+    if (!token)
+      throw new BadRequestError(`Your github integration cannot be used!`);
+
+    const result = await this.githubService.getRepository({
+      token,
+      repoName,
+      repoOwner,
+    });
+
+    if (!result || !result.data)
+      throw new NotFoundError(
+        `The repository not exists or you're not allowed to access it!`
+      );
+
+    return result.data;
   }
 }

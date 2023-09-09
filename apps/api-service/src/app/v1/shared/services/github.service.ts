@@ -7,7 +7,7 @@ import { logger } from "@/config/logger";
 
 @injectable()
 export class GithubService {
-  appOctokit: InstanceType<typeof Octokit>;
+  private appOctokit: InstanceType<typeof Octokit>;
 
   constructor() {
     this.appOctokit = new Octokit({
@@ -67,6 +67,66 @@ export class GithubService {
     } catch (error) {
       logger.error(
         `Couldn't get the latest commit for repository with name <${repoName}> and from owner <${repoOwner}>`
+      );
+      console.log(error);
+      return undefined;
+    }
+  }
+
+  async getRepository({
+    token,
+    repoName,
+    repoOwner,
+  }: {
+    token: string;
+    repoName: string;
+    repoOwner: string;
+  }) {
+    try {
+      const octokit = new Octokit({ auth: token });
+
+      const result = await octokit.repos.get({
+        owner: repoOwner,
+        repo: repoName,
+      });
+
+      return result;
+    } catch (error) {
+      logger.error(
+        `Couldn't get the repository with name <${repoName}> from owner <${repoOwner}>`
+      );
+      console.log(error);
+      return undefined;
+    }
+  }
+
+  async listBranches({
+    token,
+    repoName,
+    repoOwner,
+    page,
+    limit,
+  }: {
+    token: string;
+    repoName: string;
+    repoOwner: string;
+    page: number;
+    limit: number;
+  }) {
+    try {
+      const octokit = new Octokit({ auth: token });
+
+      const result = await octokit.repos.listBranches({
+        owner: repoOwner,
+        repo: repoName,
+        page,
+        per_page: limit,
+      });
+
+      return result;
+    } catch (error) {
+      logger.error(
+        `Couldn't get the branches from repository with name <${repoName}> from owner <${repoOwner}>`
       );
       console.log(error);
       return undefined;
