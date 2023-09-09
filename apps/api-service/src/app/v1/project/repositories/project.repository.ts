@@ -12,7 +12,7 @@ import {
   ProjectRepository as DBProjectRepository,
   ProjectBuildSettings,
 } from "@/db/types";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { injectable } from "inversify";
 
 interface ICreateParams {
@@ -30,10 +30,29 @@ export interface IProjectRepository {
   getBuildSettings: (
     projectId: string
   ) => Promise<ProjectBuildSettings | undefined>;
+  getAll: (params: {
+    userId: string;
+  }) => Promise<{ projects: Project[]; totalCount: number }>;
 }
 
 @injectable()
 export class ProjectRepository implements IProjectRepository {
+  async getAll({ userId }: { userId: string }) {
+    const result = await db.query.projects.findMany({
+      where: eq(projects.userId, userId),
+    });
+
+    const totalCount = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(projects)
+      .where(eq(projects.userId, userId));
+
+    return {
+      projects: result,
+      totalCount: totalCount[0].count,
+    };
+  }
+
   async create({
     project,
     repository,

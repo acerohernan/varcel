@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,44 +11,15 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 import { useGitRepository } from "@/hooks/query/useGitRepository";
-
-const formSchema = z.object({
-  projectName: z.string().nonempty(),
-  projectSubdomain: z.string().nonempty(),
-  framework: z.string().nonempty(),
-
-  repository: z
-    .object({
-      url: z.string().url(),
-      name: z.string().nonempty(), // e.g. livekit
-      namespace: z.string().nonempty(), // e.g. acerohernan/livekit
-      branch: z.string().nonempty(),
-    })
-    .strict(),
-
-  buildSettings: z
-    .object({
-      rootDirectory: z.string().nonempty(),
-      buildCommand: z.string().nonempty(),
-      outputDir: z.string().nonempty(),
-      installCommand: z.string().nonempty(),
-    })
-    .strict(),
-
-  env: z.array(
-    z
-      .object({
-        key: z.string().nonempty(),
-        value: z.string().nonempty(),
-      })
-      .strict(),
-  ),
-});
-
-type Form = z.infer<typeof formSchema>;
+import { CreateProjectShema, ICreateProjectFormValues } from "@/api/project/schemas";
+import { isError, useMutation } from "@tanstack/react-query";
+import { API } from "@/api";
+import { useEffect } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 export const ConfigureProjectCard = () => {
   const [params] = useSearchParams();
+  const { toast } = useToast();
 
   const repoUrl = params.get("url");
 
@@ -59,23 +29,45 @@ export const ConfigureProjectCard = () => {
 
   if (!repo) return null;
 
-  const form = useForm<Form>({
-    resolver: zodResolver(formSchema),
+  const mutation = useMutation({
+    mutationFn: (form: ICreateProjectFormValues) => API.project.createProject(form),
+  });
+
+  const form = useForm<ICreateProjectFormValues>({
+    resolver: zodResolver(CreateProjectShema),
     defaultValues: {
       projectName: repo.name,
       framework: "react",
-      buildSettings: {
-        buildCommand: "'npm run build' or 'vite build'",
-        rootDirectory: "./",
-        outputDir: "dist",
-        installCommand: "'yarn install' or 'pnpm install'",
+      projectSubdomain: repo.name,
+      repository: {
+        branch: repo.default_branch,
+        name: repo.name,
+        namespace: repo.full_name,
+        url: repo.url,
       },
+      buildSettings: {
+        buildCommand: "pnpm build",
+        rootDirectory: "apps/web",
+        outputDir: "dist",
+        installCommand: "pnpm install",
+      },
+      env: [],
     },
   });
 
-  function onSubmit(values: Form) {
-    console.log(values);
+  function onSubmit(form: ICreateProjectFormValues) {
+    mutation.mutate(form);
   }
+
+  useEffect(() => {
+    if (!mutation.isError) return;
+
+    toast({
+      title: "Error at creating project",
+      description: "Please try again later or contact the developer!",
+      variant: "destructive",
+    });
+  }, [mutation.isError]);
 
   return (
     <Card className="w-full mx-auto bg-background">
@@ -127,7 +119,7 @@ export const ConfigureProjectCard = () => {
                 <FormItem>
                   <FormLabel>Root Directory</FormLabel>
                   <FormControl>
-                    <Input placeholder="my-project" {...field} disabled />
+                    <Input placeholder="my-project" {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -145,7 +137,7 @@ export const ConfigureProjectCard = () => {
                           <FormItem>
                             <FormLabel>Build Command</FormLabel>
                             <FormControl>
-                              <Input placeholder="my-project" {...field} disabled />
+                              <Input placeholder="my-project" {...field} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -157,7 +149,7 @@ export const ConfigureProjectCard = () => {
                           <FormItem>
                             <FormLabel>Output Directory</FormLabel>
                             <FormControl>
-                              <Input placeholder="my-project" {...field} disabled />
+                              <Input placeholder="my-project" {...field} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -169,7 +161,7 @@ export const ConfigureProjectCard = () => {
                           <FormItem>
                             <FormLabel>Install Command</FormLabel>
                             <FormControl>
-                              <Input placeholder="my-project" {...field} disabled />
+                              <Input placeholder="my-project" {...field} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -203,7 +195,7 @@ export const ConfigureProjectCard = () => {
                 </AccordionItem>
               </Accordion>
             </div>
-            <Button type="submit" className="mt-2">
+            <Button type="submit" className="mt-2" disabled={mutation.isLoading}>
               Deploy
             </Button>
           </form>

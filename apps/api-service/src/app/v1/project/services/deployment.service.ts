@@ -42,11 +42,9 @@ export class DeploymentService {
     if (!project)
       throw new NotFoundError(`Not found a project with id ${projectId}`);
 
-    const projectRepository = await this.projectRepository.getRepository(
-      projectId
-    );
+    const projectRepo = await this.projectRepository.getRepository(projectId);
 
-    if (!projectRepository)
+    if (!projectRepo)
       throw new NotFoundError(
         `Not found a repository configured for project with id ${projectId}`
       );
@@ -76,13 +74,13 @@ export class DeploymentService {
         `Couldn't create an access token for your installation, check your installion in github and try again.`
       );
 
-    const repoName = "livekit-whiteboard";
-    const repoOwner = "acerohernan";
+    const repoName = projectRepo.name;
+    const repoOwner = projectRepo.namespace?.split("/")[0];
 
     const lastCommit = await this.githubService.getLastestCommit({
       token,
-      repoName,
-      repoOwner,
+      repoName: repoName!,
+      repoOwner: repoOwner!,
     });
 
     if (!lastCommit)
@@ -91,12 +89,11 @@ export class DeploymentService {
       );
 
     // Create the new deployment in database
-
     const newDeployment: NewDeployment = {
       id: uuid(),
       projectId,
       status: "queued",
-      sourceGitBranch: projectRepository.branch,
+      sourceGitBranch: projectRepo.branch,
       sourceGitCommitSha: lastCommit.sha,
       sourceGitCommitLink: lastCommit.url,
       sourceGitCommitMessage: lastCommit.commit.message,
@@ -108,7 +105,7 @@ export class DeploymentService {
     // Create the livekit room
 
     // Save the deployment to database
-    //await this.deploymentRepository.create(newDeployment);
+    await this.deploymentRepository.create(newDeployment);
 
     // Send the sqs event
   }

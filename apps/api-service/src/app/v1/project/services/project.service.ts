@@ -19,12 +19,15 @@ import {
   TCreateProjectDTO,
 } from "../dtos/create-project.dto";
 import { GetProjectsDTO, TGetProjectsDTO } from "../dtos/get-projects.dto";
+import { DeploymentService } from "./deployment.service";
 
 @injectable()
 export class ProjectService {
   constructor(
     @inject(CONTAINER_TYPES.ProjectRepository)
-    private projectRepository: ProjectRepository
+    private projectRepository: ProjectRepository,
+    @inject(CONTAINER_TYPES.DeploymentService)
+    private deploymentService: DeploymentService
   ) {}
 
   async getAll(
@@ -35,7 +38,13 @@ export class ProjectService {
     if (!validation.success)
       throw new BadRequestError(getZodErrors(validation.error));
 
-    return { projects: [], totalCount: 0 };
+    const { page, perPage, userId } = dto;
+
+    const { projects, totalCount } = await this.projectRepository.getAll({
+      userId,
+    });
+
+    return { projects, totalCount };
   }
 
   async create(dto: TCreateProjectDTO): Promise<void> {
@@ -83,5 +92,7 @@ export class ProjectService {
       buildSettings: newBuildSettings,
       envVariables: newEnvVariables,
     });
+
+    await this.deploymentService.create({ projectId: newProject.id!, userId });
   }
 }
