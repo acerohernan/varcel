@@ -25,7 +25,7 @@ export const DeploymentPage = () => {
   return (
     <div>
       <div className="bg-background border-y">
-        <div className="max-w-[1200px] mx-auto px-8 py-12">
+        <div className="max-w-[1300px] mx-auto px-8 py-12">
           <div className="grid lg:grid-cols-[1fr_208px] relative">
             <div className="grid gap-8 md:grid-cols-[400px_1fr]">
               <div className="flex-shrink-0">
@@ -91,7 +91,7 @@ export const DeploymentPage = () => {
         </div>
       </div>
       <div className="h-full">
-        <div className="max-w-[1200px] mx-auto px-8 py-12">
+        <div className="max-w-[1300px] mx-auto px-8 py-12">
           <h1 className="text-2xl font-medium">Deployment Details</h1>
           <div className="grid gap-4 mt-4">
             <Accordion type="multiple" className="bg-background" defaultValue={["item-1", "item-2"]}>

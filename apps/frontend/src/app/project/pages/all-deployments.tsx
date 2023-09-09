@@ -8,11 +8,11 @@ export const AllDeploymentsPage = () => {
   return (
     <div>
       <div className="bg-background border-b">
-        <div className="p-8 max-w-[1200px] mx-auto grid gap-6 md:flex md:justify-between items-center">
+        <div className="p-8 max-w-[1300px] mx-auto grid gap-6 md:flex md:justify-between items-center">
           <h1 className="text-3xl">Deployments</h1>
         </div>
       </div>
-      <div className="grid px-8 my-4 gap-4 max-w-[1200px] mx-auto">
+      <div className="grid px-8 my-4 gap-4 max-w-[1300px] mx-auto">
         {Array(5)
           .fill(0)
           .map(() => (

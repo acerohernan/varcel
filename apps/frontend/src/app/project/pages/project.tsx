@@ -14,7 +14,7 @@ export const ProjectPage = () => {
   return (
     <div>
       <div className="bg-background border-b">
-        <div className="p-8 max-w-[1200px] mx-auto grid gap-6 md:flex md:justify-between items-center">
+        <div className="p-8 max-w-[1300px] mx-auto grid gap-6 md:flex md:justify-between items-center">
           <h1 className="text-3xl">{projectName}</h1>
           <div className="flex gap-4">
             <Button>Visit</Button>
@@ -23,7 +23,7 @@ export const ProjectPage = () => {
           </div>
         </div>
       </div>
-      <div className="p-8 my-4 max-w-[1200px] mx-auto">
+      <div className="p-8 my-4 max-w-[1300px] mx-auto">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-medium">Production Deployment</h1>
           <div className="hidden md:flex items-center gap-4">

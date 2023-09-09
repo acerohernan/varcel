@@ -33,7 +33,7 @@ export const HomePage = () => {
 
   return (
     <div className="border-t flex-1 flex flex-col">
-      <div className="w-full max-w-[1200px] p-4 mx-auto flex-1 flex flex-col">
+      <div className="w-full max-w-[1300px] p-4 mx-auto flex-1 flex flex-col">
         <div className="mb-4 flex items-center gap-4">
           <Input
             type="text"
