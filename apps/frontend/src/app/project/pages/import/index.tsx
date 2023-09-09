@@ -1,13 +1,31 @@
-import { BsArrowLeft, BsArrowRight, BsFolder } from "react-icons/bs";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { LuGitBranch } from "react-icons/lu";
 import { AiFillGithub } from "react-icons/ai";
+import { BsArrowLeft, BsArrowRight, BsFolder } from "react-icons/bs";
 
-import { ConfigureProjectCard } from "../components/configure-project";
 import { Separator } from "@/components/ui/separator";
-import { Link } from "react-router-dom";
-import { DeployProjectCard } from "../components/deploy-project";
+import { ConfigureProjectCard } from "../../components/configure-project";
+import { useGitRepository } from "@/hooks/query/useGitRepository";
+import { useEffect } from "react";
+import { ImportProjectPageSkeleton } from "./skeleton";
 
 export const ImportProjectPage = () => {
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const repoUrl = params.get("url");
+
+  useEffect(() => {
+    if (!repoUrl) navigate("/new");
+  }, []);
+
+  if (!repoUrl) return null;
+
+  const { data: repo, isLoading, isError } = useGitRepository({ repoUrl });
+
+  if (isLoading) return <ImportProjectPageSkeleton />;
+
+  if (isError || !repo) return <h1>Error happened</h1>;
+
   return (
     <div className="relative">
       <div className="bg-white dark:bg-black absolute w-full top-0 h-[320px] lg:h-[280px] z-0 border-b" />
@@ -28,7 +46,7 @@ export const ImportProjectPage = () => {
               <div className="text-3xl">
                 <AiFillGithub />
               </div>
-              <span>livekit-whiteboard</span>
+              <span>{repo.name}</span>
             </div>
             <div className="hidden lg:grid mt-[80px] gap-1">
               <span className="text-muted-foreground text-[0.8rem] mb-3">GIT REPOSITORY</span>
@@ -36,13 +54,13 @@ export const ImportProjectPage = () => {
                 <div className="text-xl">
                   <AiFillGithub />
                 </div>
-                <span className="text-sm">acerohernan/livekit-whiteboard</span>
+                <span className="text-sm">{repo.full_name}</span>
               </div>
               <div className="flex gap-1 items-center mt-2 text-muted-foreground">
                 <div className="text-xl">
                   <LuGitBranch />
                 </div>
-                <span className="text-sm">master</span>
+                <span className="text-sm">{repo.default_branch}</span>
               </div>
               <div className="flex gap-1 items-center mt-2 text-muted-foreground">
                 <div className="text-xl">
@@ -62,7 +80,6 @@ export const ImportProjectPage = () => {
           </div>
           <div className="grid gap-10">
             <ConfigureProjectCard />
-            <DeployProjectCard />
           </div>
         </div>
       </div>

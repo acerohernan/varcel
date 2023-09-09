@@ -11,4 +11,14 @@ export interface IGitRepository {
   full_name: string;
   description: string;
   url: string;
+  default_branch: string;
+}
+
+export interface IGitBranch {
+  name: string;
+  protected: false;
+  commit: {
+    sha: string;
+    url: string;
+  };
 }

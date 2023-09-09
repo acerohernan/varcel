@@ -74,6 +74,7 @@
     font-family: "Inter", sans-serif;
     min-width: 100vw;
     min-height: 100vh;
+    overflow-x: hidden;
     @apply bg-white_secondary dark:bg-black_secondary text-foreground;
   }
 

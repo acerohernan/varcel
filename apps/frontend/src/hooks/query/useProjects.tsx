@@ -14,4 +14,10 @@ export const useProjects = () =>
       }
     },
     retry: 1,
+    refetchInterval: false,
+    refetchOnWindowFocus: false,
+    refetchIntervalInBackground: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retryOnMount: false,
   });

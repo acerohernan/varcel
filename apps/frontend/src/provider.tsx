@@ -12,16 +12,18 @@ const queryClient = new QueryClient();
 
 const Provider = () => {
   return (
-    <ThemeProvider defaultTheme="system" storageKey="ui-theme">
-      <Toaster />
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <UILayout>
-            <Outlet />
-          </UILayout>
-        </AuthProvider>
-      </QueryClientProvider>
-    </ThemeProvider>
+    <>
+      <ThemeProvider defaultTheme="system" storageKey="ui-theme">
+        <Toaster />
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <UILayout>
+              <Outlet />
+            </UILayout>
+          </AuthProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </>
   );
 };
 

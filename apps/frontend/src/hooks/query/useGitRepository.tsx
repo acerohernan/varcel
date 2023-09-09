@@ -1,14 +1,15 @@
-import { API } from "@/api";
-import { IUser } from "@/api/user/types";
 import { useQuery } from "@tanstack/react-query";
 
-export const useUser = () =>
+import { API } from "@/api";
+import { IGitRepository } from "@/api/user/types";
+
+export const useGitRepository = ({ repoUrl }: { repoUrl: string }) =>
   useQuery({
-    queryKey: ["user"],
+    queryKey: ["user", "repositories", repoUrl],
     queryFn: async () => {
       try {
-        const response = await API.user.getUser();
-        return response.data.user as IUser;
+        const response = await API.user.getGitReposity({ url: repoUrl });
+        return response.data.repository as IGitRepository;
       } catch (error: any) {
         throw new Error(error);
       }

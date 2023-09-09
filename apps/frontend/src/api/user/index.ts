@@ -7,3 +7,7 @@ export function getUser() {
 export function getGitRepositories() {
   return axiosInstance.get("/user/repository", { headers: authHeaders() });
 }
+
+export function getGitReposity({ url }: { url: string }) {
+  return axiosInstance.get(`/user/get-repo?url=${url}`, { headers: authHeaders() });
+}

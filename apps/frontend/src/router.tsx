@@ -7,7 +7,7 @@ import { HomePage } from "./app/shared/pages/home";
 import { NotFoundPage } from "./app/shared/pages/404";
 
 import { NewProjectPage } from "./app/project/pages/new";
-import { ImportProjectPage } from "./app/project/pages/import";
+import { ImportProjectPage } from "./app/project/pages/import/index";
 import { ProjectPage } from "./app/project/pages/project";
 import { AllDeploymentsPage } from "./app/project/pages/all-deployments";
 import { DeploymentPage } from "./app/project/pages/deployment";

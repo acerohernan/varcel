@@ -5,15 +5,16 @@ import { RiCloseCircleLine } from "react-icons/ri";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AccountSelector } from "./account-selector";
-import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useRepositories } from "@/hooks/query/useGitRepositories";
 import { ImportRepositoryCardSkeleton } from "./skeleton";
+import { FaCode } from "react-icons/fa";
 
 export const ImportRepositoryCard = () => {
   const { data: repositories, isLoading, isError } = useRepositories();
+  const navigate = useNavigate();
 
   const [value, setValue] = useState("");
 
@@ -65,12 +66,12 @@ export const ImportRepositoryCard = () => {
             >
               <div className="flex items-center gap-4">
                 <div className="text-xl text-muted-foreground">
-                  <AiOutlineQuestionCircle />
+                  <FaCode />
                 </div>
                 <span className="font-light text-sm">{repo.name}</span>
               </div>
               <Button asChild>
-                <Link to={`/new/import?repository=${repo.url}`}>Import</Link>
+                <Link to={`/new/import?url=${repo.url}`}>Import</Link>
               </Button>
             </div>
           ))}
