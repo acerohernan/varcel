@@ -7,11 +7,11 @@ import { projects } from "./index";
 
 export const projectRepositories = pgTable("project_repositories", {
   ...primaryKeys,
-  projectId: uuid("project_id"),
-  url: varchar("url"),
-  name: varchar("name"),
-  namespace: varchar("namespace"),
-  branch: varchar("branch"),
+  projectId: uuid("project_id").unique().notNull(),
+  url: varchar("url").notNull(),
+  name: varchar("name").notNull(),
+  namespace: varchar("namespace").notNull(),
+  branch: varchar("branch").notNull(),
 });
 
 export const projectRepositoriesRelations = relations(

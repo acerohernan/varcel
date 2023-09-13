@@ -8,16 +8,18 @@ import { projectRepositories } from "./repository";
 import { projectEnvVariables } from "./env-variables";
 import { users } from "../user";
 import { deployments } from "../deployment";
+import { deploymentsCount } from "../deployment/count";
+import { lastDeployments } from "../deployment/last-deployment";
 
 export const projects = pgTable(
   "projects",
   {
     ...primaryKeys,
     ...timestamps,
-    userId: uuid("user_id"),
-    name: varchar("name"),
-    subdomain: varchar("subdomain").unique(),
-    framework: varchar("framework").unique(),
+    userId: uuid("user_id").notNull(),
+    name: varchar("name").notNull(),
+    subdomain: varchar("subdomain").unique().notNull(),
+    framework: varchar("framework").notNull(),
   },
   (table) => {
     return {
@@ -41,4 +43,12 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   }),
   envVariables: many(projectEnvVariables),
   deployments: many(deployments),
+  deploymentsCount: one(deploymentsCount, {
+    fields: [projects.id],
+    references: [deploymentsCount.projectId],
+  }),
+  lastDeployment: one(lastDeployments, {
+    fields: [projects.id],
+    references: [lastDeployments.projectId],
+  }),
 }));

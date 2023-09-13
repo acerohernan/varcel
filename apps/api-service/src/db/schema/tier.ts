@@ -9,10 +9,10 @@ export const tiers = pgTable(
   {
     ...primaryKeys,
     ...timestamps,
-    price: integer("price"),
-    name: varchar("name"),
-    concurrentBuilds: integer("concurrent_builds"),
-    maxNumberOfProjects: integer("max_number_of_projects"),
+    price: integer("price").notNull(),
+    name: varchar("name").notNull(),
+    concurrentBuilds: integer("concurrent_builds").notNull(),
+    maxNumberOfProjects: integer("max_number_of_projects").notNull(),
   },
   (table) => ({
     priceIdx: index("price_idx").on(table.price),

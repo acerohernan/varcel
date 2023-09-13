@@ -8,8 +8,8 @@ import { users } from "./index";
 export const userGhIntegrations = pgTable("users_gh_integrations", {
   ...primaryKeys,
   ...timestamps,
-  userId: uuid("user_id"),
-  ghUserId: integer("gh_user_id").unique(),
+  userId: uuid("user_id").unique().notNull(),
+  ghUserId: integer("gh_user_id").unique().notNull(),
   ghInstallationId: integer("gh_installation_id"),
 });
 

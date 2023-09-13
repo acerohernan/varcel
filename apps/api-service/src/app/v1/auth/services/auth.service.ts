@@ -44,7 +44,7 @@ export class AuthService {
 
       let newGhIntegration: NewUserGhIntegration = {
         id: uuid(),
-        userId: newUser.id,
+        userId: newUser.id!,
         ghUserId: ghId,
         ghInstallationId: null,
       };

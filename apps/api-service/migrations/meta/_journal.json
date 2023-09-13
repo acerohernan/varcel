@@ -36,6 +36,13 @@
       "when": 1693068030240,
       "tag": "0004_secret_demogoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1694610410230,
+      "tag": "0005_chemical_silver_samurai",
+      "breakpoints": true
     }
   ]
 }

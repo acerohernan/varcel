@@ -71,17 +71,17 @@ export class ProjectService {
       subdomain: projectSubdomain,
     };
     const newRepository: NewProjectRepository = {
-      projectId: newProject.id,
+      projectId: newProject.id!,
       ...repository,
     };
     const newBuildSettings: NewProjectBuildSettings = {
-      projectId: newProject.id,
+      projectId: newProject.id!,
       ...buildSettings,
     };
     const newEnvVariables: Array<NewProjectEnvVariable> = env.map(
       (variable) => ({
         id: uuid(),
-        projectId: newProject.id,
+        projectId: newProject.id!,
         ...variable,
       })
     );

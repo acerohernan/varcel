@@ -6,13 +6,14 @@ import { primaryKeys, timestamps } from "@/db/utils";
 import { tiers } from "../tier";
 import { userGhIntegrations } from "./gh-integration";
 import { projects } from "../project";
+import { projectsCount } from "../project/count";
 
 export const users = pgTable("users", {
   ...primaryKeys,
   ...timestamps,
-  email: varchar("email").unique(),
-  username: varchar("username"),
-  tierId: uuid("tier_id"),
+  email: varchar("email").unique().notNull(),
+  username: varchar("username").notNull(),
+  tierId: uuid("tier_id").notNull(),
 });
 
 export const usersRelations = relations(users, ({ one, many }) => ({
@@ -25,4 +26,8 @@ export const usersRelations = relations(users, ({ one, many }) => ({
     references: [userGhIntegrations.userId],
   }),
   projects: many(projects),
+  projectsCount: one(projectsCount, {
+    fields: [users.id],
+    references: [projectsCount.userId],
+  }),
 }));

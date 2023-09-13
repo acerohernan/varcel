@@ -6,9 +6,9 @@ import { projects } from ".";
 export const projectEnvVariables = pgTable("project_env_variables", {
   ...primaryKeys,
   ...timestamps,
-  projectId: uuid("project_id"),
-  key: varchar("key"),
-  value: varchar("value"),
+  projectId: uuid("project_id").notNull(),
+  key: varchar("key").notNull(),
+  value: varchar("value").notNull(),
 });
 
 export const projectsBuildSettingsRelations = relations(
