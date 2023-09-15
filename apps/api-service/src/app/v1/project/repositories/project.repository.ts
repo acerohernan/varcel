@@ -65,7 +65,7 @@ export class ProjectRepository implements IProjectRepository {
 
     const projectsRes = result.map((r) => ({
       ...r.projects,
-      lastDeploment: r.deployments,
+      latestDeployment: r.deployments,
     }));
 
     return projectsRes;
