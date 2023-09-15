@@ -24,8 +24,8 @@ export const HomePage = () => {
 
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {projects.map(() => (
-          <ProjectCard key={Math.random()} />
+        {projects.map((project) => (
+          <ProjectCard key={project.id} project={project} />
         ))}
       </div>
     );

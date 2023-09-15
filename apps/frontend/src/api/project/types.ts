@@ -1,7 +1,19 @@
-interface IProject {}
+export interface IProject {
+  id: string;
+  userId: string;
+  name: string;
+  subdomain: string;
+  framework: string;
+}
 
-interface IProjectEnv {}
-interface ICreateProjectFormValues {
+// TODO: Fetch the project and the latest deployment
+// /project/:projectName
+// /project/:projectName/deployments/latest
+// /project/:projectName/deployments
+// /project/:projectName/deployments/:deploymentId
+
+export interface IProjectEnv {}
+export interface ICreateProjectFormValues {
   projectName: string;
   projectSubdomain: string;
   framework: string;
@@ -14,9 +26,9 @@ interface ICreateProjectFormValues {
   };
 
   buildSettings: {
-    rootDirectory: string;
-    buildCommand: string;
     outputDir: string;
+    buildCommand: string;
+    rootDirectory: string;
     installCommand: string;
   };
 

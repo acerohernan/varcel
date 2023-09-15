@@ -1,10 +1,16 @@
-import { AiFillGithub } from "react-icons/ai";
+import { Link } from "react-router-dom";
 import { LuGitBranch } from "react-icons/lu";
+import { AiFillGithub } from "react-icons/ai";
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router-dom";
 
-export const ProjectCard = () => {
+import { IProject } from "@/api/project/types";
+
+interface Props {
+  project: IProject;
+}
+
+export const ProjectCard: React.FC<Props> = ({ project }) => {
   return (
     <Link to="/projects/aws-clone">
       <Card className="w-full bg-background hover:border-black dark:hover:border-white">
@@ -12,8 +18,8 @@ export const ProjectCard = () => {
           <div className="flex items-center gap-4">
             <img className="w-8 h-8 rounded-full" src="https://vercel.com/api/www/avatar?u=acerohernan&s=44" />
             <div>
-              <CardTitle className="font-normal text-md">aws-clone</CardTitle>
-              <CardDescription>aws-clone.vercel.app</CardDescription>
+              <CardTitle className="font-normal text-md">{project.name}</CardTitle>
+              <CardDescription>{project.name}.vercel.app</CardDescription>
             </div>
           </div>
         </CardHeader>
