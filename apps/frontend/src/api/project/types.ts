@@ -1,9 +1,15 @@
+import { IDeployment } from "../deployment/types";
+
 export interface IProject {
   id: string;
   userId: string;
   name: string;
   subdomain: string;
   framework: string;
+}
+
+export interface IProjectWithLatestDeployment extends IProject {
+  latestDeployment: IDeployment;
 }
 
 // TODO: Fetch the project and the latest deployment

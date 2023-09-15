@@ -6,10 +6,10 @@ import { Input } from "@/components/ui/input";
 import { ProjectCard } from "../components/project-card";
 import { AddResourceMenu } from "../components/add-resource-menu";
 
-import { useProjects } from "@/hooks/query/useProjects";
+import { useProjectsWithLatestDeployment } from "@/hooks/query/useProjectsWithLatestDeployment";
 
 export const HomePage = () => {
-  const { data: projects, isLoading, isError } = useProjects();
+  const { data: projects, isLoading, isError } = useProjectsWithLatestDeployment();
 
   const [value, setValue] = useState("");
 

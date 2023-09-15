@@ -4,13 +4,15 @@ import { AiFillGithub } from "react-icons/ai";
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { IProject } from "@/api/project/types";
+import { IProjectWithLatestDeployment } from "@/api/project/types";
 
 interface Props {
-  project: IProject;
+  project: IProjectWithLatestDeployment;
 }
 
 export const ProjectCard: React.FC<Props> = ({ project }) => {
+  const { latestDeployment: deployment } = project;
+
   return (
     <Link to="/projects/aws-clone">
       <Card className="w-full bg-background hover:border-black dark:hover:border-white">
@@ -25,10 +27,10 @@ export const ProjectCard: React.FC<Props> = ({ project }) => {
         </CardHeader>
         <CardContent>
           <div className="text-muted-foreground text-sm">
-            <p>build(web): Updating styles in Menu Component inside the dashboard page</p>
+            <p>{deployment.sourceGitCommitMessage}</p>
             <span className="flex items-center gap-1 font-light mt-2">
               <LuGitBranch />
-              From master
+              From {deployment.sourceGitBranch}
             </span>
           </div>
         </CardContent>
