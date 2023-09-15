@@ -62,7 +62,7 @@ export class ProjectController {
 
     const projectId = req.params["projectId"];
 
-    await this.deploymentService.create({ projectId, userId: user.id });
+    await this.deploymentService.createNew({ projectId, userId: user.id });
 
     res.sendStatus(200);
   }

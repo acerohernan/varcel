@@ -8,6 +8,9 @@ import { projectBuildSettings } from "./project/build-settings";
 import { projectEnvVariables } from "./project/env-variables";
 import { projectRepositories } from "./project/repository";
 import { deployments } from "./deployment";
+import { projectsCount } from "./project/count";
+import { lastDeployments } from "./deployment/last-deployment";
+import { deploymentsCount } from "./deployment/count";
 
 export const schema = {
   tiers,
@@ -19,6 +22,9 @@ export const schema = {
   projectBuildSettings,
   projectEnvVariables,
   projectRepositories,
+  projectsCount,
+  lastDeployments,
 
   deployments,
+  deploymentsCount,
 };

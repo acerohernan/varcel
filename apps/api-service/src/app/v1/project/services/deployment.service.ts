@@ -1,7 +1,13 @@
 import { inject, injectable } from "inversify";
 import { v4 as uuid } from "uuid";
 
-import { NewDeployment } from "@/db/types";
+import {
+  NewDeployment,
+  NewProject,
+  NewProjectRepository,
+  Project,
+  ProjectRepository as DBProjectRepository,
+} from "@/db/types";
 import { BadRequestError, NotFoundError } from "@/lib/errors";
 
 import { getZodErrors } from "@v1/shared/lib/zod";
@@ -29,7 +35,7 @@ export class DeploymentService {
     private githubService: GithubService
   ) {}
 
-  async create(dto: TCreateDeploymentDTO) {
+  async createNew(dto: TCreateDeploymentDTO) {
     const validation = CreateDeploymentDTO.safeParse(dto);
 
     if (!validation.success)
@@ -49,6 +55,22 @@ export class DeploymentService {
         `Not found a repository configured for project with id ${projectId}`
       );
 
+    await this.create({ userId, project, projectRepo });
+  }
+
+  /**
+   * @description Protected function to use only inside another service class, do not use it inside a controller. The fn to use
+   * within controllers is `createNew`;
+   */
+  async create({
+    userId,
+    project,
+    projectRepo,
+  }: {
+    userId: string;
+    project: Project | NewProject;
+    projectRepo: DBProjectRepository | NewProjectRepository;
+  }) {
     const integration = await this.userGhIntegrationRepository.getByUserId(
       userId
     );
@@ -76,11 +98,13 @@ export class DeploymentService {
 
     const repoName = projectRepo.name;
     const repoOwner = projectRepo.namespace?.split("/")[0];
+    const repoBranch = projectRepo.branch;
 
     const lastCommit = await this.githubService.getLastestCommit({
       token,
-      repoName: repoName!,
-      repoOwner: repoOwner!,
+      repoName,
+      repoOwner,
+      repoBranch,
     });
 
     if (!lastCommit)
@@ -91,13 +115,16 @@ export class DeploymentService {
     // Create the new deployment in database
     const newDeployment: NewDeployment = {
       id: uuid(),
-      projectId,
+      projectId: project.id!,
       status: "queued",
       sourceGitBranch: projectRepo.branch,
       sourceGitCommitSha: lastCommit.sha,
       sourceGitCommitLink: lastCommit.url,
       sourceGitCommitMessage: lastCommit.commit.message,
       environment: "development",
+      buildLogs: "",
+      durationInSeconds: 0,
+      screenshootUrl: "",
     };
 
     console.log({ newDeployment });

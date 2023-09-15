@@ -47,10 +47,12 @@ export class GithubService {
     token,
     repoOwner,
     repoName,
+    repoBranch,
   }: {
     token: string;
     repoName: string;
     repoOwner: string;
+    repoBranch: string;
   }) {
     try {
       const octokit = new Octokit({ auth: token });
@@ -58,6 +60,7 @@ export class GithubService {
       const result = await octokit.repos.listCommits({
         owner: repoOwner,
         repo: repoName,
+        sha: repoBranch,
         per_page: 1,
       });
 

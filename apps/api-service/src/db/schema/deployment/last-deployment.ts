@@ -7,8 +7,8 @@ import { deployments } from ".";
 
 export const lastDeployments = pgTable("last_deployments", {
   ...primaryKeys,
-  projectId: uuid("user_id").unique().notNull(),
-  deploymentId: uuid("user_id").notNull(),
+  projectId: uuid("project_id").unique().notNull(),
+  deploymentId: uuid("deployment_id"),
 });
 
 export const lastDeploymentsRelations = relations(

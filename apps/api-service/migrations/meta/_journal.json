@@ -43,6 +43,13 @@
       "when": 1694610410230,
       "tag": "0005_chemical_silver_samurai",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1694783522066,
+      "tag": "0006_many_bedlam",
+      "breakpoints": true
     }
   ]
 }

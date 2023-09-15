@@ -7,6 +7,7 @@ import {
   NewProjectBuildSettings,
   NewProjectEnvVariable,
   NewProjectRepository,
+  Project,
 } from "@/db/types";
 
 import { CONTAINER_TYPES } from "@v1/shared/container/types";
@@ -93,6 +94,10 @@ export class ProjectService {
       envVariables: newEnvVariables,
     });
 
-    await this.deploymentService.create({ projectId: newProject.id!, userId });
+    await this.deploymentService.create({
+      userId,
+      project: newProject,
+      projectRepo: newRepository,
+    });
   }
 }

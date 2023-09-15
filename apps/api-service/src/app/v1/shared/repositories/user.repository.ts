@@ -1,3 +1,4 @@
+import { v4 } from "uuid";
 import { eq } from "drizzle-orm";
 import { injectable } from "inversify";
 
@@ -10,6 +11,7 @@ import {
 } from "@/db/types";
 import { users } from "@/db/schema/user";
 import { userGhIntegrations } from "@/db/schema/user/gh-integration";
+import { projectsCount } from "@/db/schema/project/count";
 
 export interface IUserRepository {
   getById: (id: string) => Promise<User | undefined>;
@@ -36,7 +38,13 @@ export class UserRepository implements IUserRepository {
   async create(newUser: NewUser, newGhIntegration: NewUserGhIntegration) {
     return db.transaction(async (tx) => {
       await tx.insert(users).values(newUser);
-      await tx.insert(userGhIntegrations).values(newGhIntegration);
+
+      await Promise.all([
+        tx.insert(userGhIntegrations).values(newGhIntegration),
+        tx
+          .insert(projectsCount)
+          .values({ id: v4(), userId: newUser.id!, totalCount: 0 }),
+      ]);
     });
   }
 }

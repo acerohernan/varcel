@@ -6,7 +6,7 @@ import { primaryKeys } from "../../utils";
 
 export const deploymentsCount = pgTable("deployments_count", {
   ...primaryKeys,
-  projectId: uuid("user_id").unique().notNull(),
+  projectId: uuid("project_id").unique().notNull(),
   totalCount: integer("total_count").default(0).notNull(),
 });
 

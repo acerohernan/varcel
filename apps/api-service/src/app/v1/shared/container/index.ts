@@ -4,18 +4,18 @@ import { AuthService } from "@v1/auth/services/auth.service";
 import { AuthController } from "@v1/auth/auth.controller";
 import { UserController } from "@v1/user/user.controller";
 import { UserService } from "@v1/user/services/user.service";
-
-import { JWTService } from "../services/jwt.service";
-
-import { CONTAINER_TYPES } from "./types";
-import { UserRepository } from "../repositories/user.repository";
-import { UserGhIntegrationRepository } from "../../user/repositories/user-gh-integration.repository";
 import { ProjectController } from "@v1/project/project.controller";
 import { ProjectService } from "@v1/project/services/project.service";
 import { ProjectRepository } from "@v1/project/repositories/project.repository";
 import { DeploymentService } from "@v1/project/services/deployment.service";
 import { DeploymentRepository } from "@v1/project/repositories/deployment.repository";
+
+import { JWTService } from "../services/jwt.service";
 import { GithubService } from "../services/github.service";
+import { UserRepository } from "../repositories/user.repository";
+import { UserGhIntegrationRepository } from "../../user/repositories/user-gh-integration.repository";
+
+import { CONTAINER_TYPES } from "./types";
 
 export const container = new Container();
 

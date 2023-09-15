@@ -1,6 +1,9 @@
 import { db } from "@/db";
+import { deploymentsCount } from "@/db/schema/deployment/count";
+import { lastDeployments } from "@/db/schema/deployment/last-deployment";
 import { projects } from "@/db/schema/project";
 import { projectBuildSettings } from "@/db/schema/project/build-settings";
+import { projectsCount } from "@/db/schema/project/count";
 import { projectEnvVariables } from "@/db/schema/project/env-variables";
 import { projectRepositories } from "@/db/schema/project/repository";
 import {
@@ -14,6 +17,7 @@ import {
 } from "@/db/types";
 import { eq, sql } from "drizzle-orm";
 import { injectable } from "inversify";
+import { v4 } from "uuid";
 
 interface ICreateParams {
   project: NewProject;
@@ -38,18 +42,20 @@ export interface IProjectRepository {
 @injectable()
 export class ProjectRepository implements IProjectRepository {
   async getAll({ userId }: { userId: string }) {
-    const result = await db.query.projects.findMany({
-      where: eq(projects.userId, userId),
-    });
-
-    const totalCount = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(projects)
-      .where(eq(projects.userId, userId));
+    const [projectsResult, totalCount] = await Promise.all([
+      db.query.projects.findMany({
+        where: eq(projects.userId, userId),
+        limit: 9,
+        offset: 0,
+      }),
+      db.query.projectsCount.findFirst({
+        where: eq(projectsCount.userId, userId),
+      }),
+    ]);
 
     return {
-      projects: result,
-      totalCount: totalCount[0].count,
+      projects: projectsResult,
+      totalCount: totalCount ? totalCount.totalCount : 0,
     };
   }
 
@@ -68,6 +74,18 @@ export class ProjectRepository implements IProjectRepository {
         envVariables.map((variable) =>
           tx.insert(projectEnvVariables).values(variable)
         ),
+        tx
+          .insert(deploymentsCount)
+          .values({ id: v4(), projectId: project.id!, totalCount: 0 }),
+        tx.insert(lastDeployments).values({
+          id: v4(),
+          projectId: project.id!,
+          deploymentId: null,
+        }),
+        tx
+          .update(projectsCount)
+          .set({ totalCount: sql`${projectsCount.totalCount} + 1` })
+          .where(eq(projectsCount.userId, projects.userId)),
       ]);
     });
   }
