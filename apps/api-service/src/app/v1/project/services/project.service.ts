@@ -41,9 +41,14 @@ export class ProjectService {
 
     const { page, perPage, userId } = dto;
 
-    const { projects, totalCount } = await this.projectRepository.getAll({
-      userId,
-    });
+    const [projects, totalCount] = await Promise.all([
+      this.projectRepository.getAll({
+        userId,
+        limit: 9,
+        offset: 0,
+      }),
+      this.projectRepository.getTotalCount({ userId }),
+    ]);
 
     return { projects, totalCount };
   }

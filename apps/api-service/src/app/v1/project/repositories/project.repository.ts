@@ -1,4 +1,5 @@
 import { db } from "@/db";
+import { deployments } from "@/db/schema/deployment";
 import { deploymentsCount } from "@/db/schema/deployment/count";
 import { lastDeployments } from "@/db/schema/deployment/last-deployment";
 import { projects } from "@/db/schema/project";
@@ -36,27 +37,48 @@ export interface IProjectRepository {
   ) => Promise<ProjectBuildSettings | undefined>;
   getAll: (params: {
     userId: string;
-  }) => Promise<{ projects: Project[]; totalCount: number }>;
+    limit: number;
+    offset: number;
+  }) => Promise<Project[]>;
+  getTotalCount: (params: { userId: string }) => Promise<number>;
 }
 
 @injectable()
 export class ProjectRepository implements IProjectRepository {
-  async getAll({ userId }: { userId: string }) {
-    const [projectsResult, totalCount] = await Promise.all([
-      db.query.projects.findMany({
-        where: eq(projects.userId, userId),
-        limit: 9,
-        offset: 0,
-      }),
-      db.query.projectsCount.findFirst({
-        where: eq(projectsCount.userId, userId),
-      }),
-    ]);
+  async getAll({
+    userId,
+    limit,
+    offset,
+  }: {
+    userId: string;
+    limit: number;
+    offset: number;
+  }) {
+    const result = await db
+      .select()
+      .from(projects)
+      .innerJoin(lastDeployments, eq(projects.id, lastDeployments.projectId))
+      .innerJoin(deployments, eq(deployments.id, lastDeployments.deploymentId))
+      .where(eq(projects.userId, userId))
+      .limit(limit)
+      .offset(offset);
 
-    return {
-      projects: projectsResult,
-      totalCount: totalCount ? totalCount.totalCount : 0,
-    };
+    const projectsRes = result.map((r) => ({
+      ...r.projects,
+      lastDeploment: r.deployments,
+    }));
+
+    return projectsRes;
+  }
+
+  async getTotalCount({ userId }: { userId: string }): Promise<number> {
+    const result = await db.query.projectsCount.findFirst({
+      where: eq(projectsCount.userId, userId),
+    });
+
+    if (!result) return 0;
+
+    return result.totalCount;
   }
 
   async create({
