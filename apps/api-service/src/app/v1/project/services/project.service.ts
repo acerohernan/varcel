@@ -1,13 +1,12 @@
 import { v4 as uuid } from "uuid";
 import { inject, injectable } from "inversify";
 
-import { BadRequestError } from "@/lib/errors";
+import { BadRequestError, NotFoundError } from "@/lib/errors";
 import {
   NewProject,
   NewProjectBuildSettings,
   NewProjectEnvVariable,
   NewProjectRepository,
-  Project,
 } from "@/db/types";
 
 import { CONTAINER_TYPES } from "@v1/shared/container/types";
@@ -21,6 +20,7 @@ import {
 } from "../dtos/create-project.dto";
 import { GetProjectsDTO, TGetProjectsDTO } from "../dtos/get-projects.dto";
 import { DeploymentService } from "./deployment.service";
+import { GetProjectDTO, TGetProjectDTO } from "../dtos/get-project.dto";
 
 @injectable()
 export class ProjectService {
@@ -104,5 +104,24 @@ export class ProjectService {
       project: newProject,
       projectRepo: newRepository,
     });
+  }
+
+  async getProject(dto: TGetProjectDTO) {
+    const validation = GetProjectDTO.safeParse(dto);
+
+    if (!validation.success)
+      throw new BadRequestError(getZodErrors(validation.error));
+
+    const { userId, projectName } = dto;
+
+    const project = await this.projectRepository.getByUserIdAndName({
+      userId,
+      projectName,
+    });
+
+    if (!project)
+      throw new NotFoundError(`Project with name ${projectName} not found`);
+
+    return project;
   }
 }

@@ -1,9 +1,18 @@
 import { authHeaders, axiosInstance } from "../config";
+import { ICreateProjectFormValues } from "./schemas";
 
 export function getProjects() {
   return axiosInstance.get("/project", { headers: authHeaders() });
 }
 
-export function createProject(formValues: {}) {
+export function getProject({ projectName }: { projectName: string }) {
+  return axiosInstance.get(`/project/${projectName}`, { headers: authHeaders() });
+}
+
+export function createProject(formValues: ICreateProjectFormValues) {
   return axiosInstance.post("/project", formValues, { headers: authHeaders() });
+}
+
+export function getDeployments({ projectId }: { projectId: string }) {
+  return axiosInstance.get(`/project/${projectId}/deployment`, { headers: authHeaders() });
 }

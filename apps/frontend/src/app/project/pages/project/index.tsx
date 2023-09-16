@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { FiExternalLink } from "react-icons/fi";
 import { BsArrowCounterclockwise } from "react-icons/bs";
 import { LuGitBranch, LuGitCommit } from "react-icons/lu";
@@ -7,9 +7,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 import deploymentScreenshootSrc from "@/assets/images/deployment-screenshoot.png";
+import { useProject } from "@/hooks/query/useProject";
 
 export const ProjectPage = () => {
-  const projectName = "aws-clone";
+  const { projectName } = useParams();
+
+  if (!projectName) return null;
+
+  const { data: project } = useProject({ projectName });
+
+  if (!project) return null;
+
+  const { latestDeployment: deployment } = project;
 
   return (
     <div>
@@ -48,7 +57,7 @@ export const ProjectPage = () => {
                 <div className="grid gap-4 text-sm">
                   <div>
                     <span className="block font-light text-muted-foreground">Deployment</span>
-                    <Link to={`/projects/${projectName}/deployments/deploymentId`}>
+                    <Link to={`/projects/${projectName}/deployments/${deployment.id}`}>
                       <p className="hover:underline cursor-pointer mt-1">portfolio-enxi06vwg-acerohernan.vercel.app</p>
                     </Link>
                   </div>
@@ -73,7 +82,7 @@ export const ProjectPage = () => {
                   <div className="grid gap-1 text-muted-foreground">
                     <span className="block font-light">Source</span>
                     <span className="flex items-center gap-2">
-                      <LuGitBranch /> main
+                      <LuGitBranch /> {deployment.sourceGitBranch}
                     </span>
                     <div className="flex items-center gap-2">
                       <LuGitCommit />
@@ -83,7 +92,7 @@ export const ProjectPage = () => {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        266b0c1 build: Updating svg icons
+                        {deployment.sourceGitCommitSha.slice(0, 6)} {deployment.sourceGitCommitMessage}
                       </a>
                     </div>
                   </div>

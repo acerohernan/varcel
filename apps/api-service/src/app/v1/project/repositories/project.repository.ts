@@ -16,7 +16,7 @@ import {
   ProjectRepository as DBProjectRepository,
   ProjectBuildSettings,
 } from "@/db/types";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { injectable } from "inversify";
 import { v4 } from "uuid";
 
@@ -29,6 +29,10 @@ interface ICreateParams {
 export interface IProjectRepository {
   create: (params: ICreateParams) => Promise<void>;
   getById: (projectId: string) => Promise<Project | undefined>;
+  getByUserIdAndName: (params: {
+    userId: string;
+    projectName: string;
+  }) => Promise<Project | undefined>;
   getRepository: (
     projectId: string
   ) => Promise<DBProjectRepository | undefined>;
@@ -116,6 +120,31 @@ export class ProjectRepository implements IProjectRepository {
     return db.query.projects.findFirst({
       where: eq(projects.id, projectId),
     });
+  }
+
+  async getByUserIdAndName({
+    userId,
+    projectName,
+  }: {
+    userId: string;
+    projectName: string;
+  }) {
+    const result = await db
+      .select()
+      .from(projects)
+      .innerJoin(lastDeployments, eq(projects.id, lastDeployments.projectId))
+      .innerJoin(deployments, eq(deployments.id, lastDeployments.deploymentId))
+      .where(and(eq(projects.userId, userId), eq(projects.name, projectName)))
+      .limit(1);
+
+    const projectRes = result[0];
+
+    if (!projectRes) return undefined;
+
+    return {
+      ...projectRes.projects,
+      latestDeployment: projectRes.deployments,
+    };
   }
 
   async getRepository(projectId: string) {

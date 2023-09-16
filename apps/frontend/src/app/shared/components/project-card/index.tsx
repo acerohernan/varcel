@@ -14,7 +14,7 @@ export const ProjectCard: React.FC<Props> = ({ project }) => {
   const { latestDeployment: deployment } = project;
 
   return (
-    <Link to="/projects/aws-clone">
+    <Link to={`projects/${project.name}`}>
       <Card className="w-full bg-background hover:border-black dark:hover:border-white">
         <CardHeader>
           <div className="flex items-center gap-4">

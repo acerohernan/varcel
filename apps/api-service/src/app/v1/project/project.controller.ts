@@ -5,9 +5,9 @@ import { UnathorizedError } from "@/lib/errors";
 
 import { CONTAINER_TYPES } from "@v1/shared/container/types";
 import { JWTUser } from "@v1/shared/middlewares/verifyJwt";
+import { IPaginatedMetadata } from "@v1/shared/lib/response";
 import { ProjectService } from "./services/project.service";
 import { DeploymentService } from "./services/deployment.service";
-import { IPaginatedMetadata } from "@v1/shared/lib/response";
 
 @injectable()
 export class ProjectController {
@@ -18,7 +18,7 @@ export class ProjectController {
     private deploymentService: DeploymentService
   ) {}
 
-  async getProjects(req: Request, res: Response) {
+  async getProjectsHandler(req: Request, res: Response) {
     const user: JWTUser = res.locals.user;
 
     if (!user) throw new UnathorizedError("Token malformed");
@@ -65,5 +65,37 @@ export class ProjectController {
     await this.deploymentService.createNew({ projectId, userId: user.id });
 
     res.sendStatus(200);
+  }
+
+  async getProjectHandler(req: Request, res: Response) {
+    const user: JWTUser = res.locals.user;
+
+    if (!user) throw new UnathorizedError("Token malformed");
+
+    const { projectName } = req.params;
+
+    const project = await this.projectService.getProject({
+      userId: user.id,
+      projectName,
+    });
+
+    res.send({ project });
+  }
+
+  async getDeploymentsHandler(req: Request, res: Response) {
+    const user: JWTUser = res.locals.user;
+
+    if (!user) throw new UnathorizedError("Token malformed");
+
+    const { projectName } = req.params;
+
+    const deployments = await this.deploymentService.getDeployments({
+      userId: user.id,
+      projectName,
+      page: 1,
+      perPage: 5,
+    });
+
+    res.send({ deployments });
   }
 }

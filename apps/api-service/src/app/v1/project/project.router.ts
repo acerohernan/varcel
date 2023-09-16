@@ -13,11 +13,19 @@ const controller = container.get<ProjectController>(
 );
 
 projectRouter.get("/", verifyJwt, (req, res) =>
-  controller.getProjects(req, res)
+  controller.getProjectsHandler(req, res)
 );
 
 projectRouter.post("/", verifyJwt, (req, res) =>
   controller.createProjectHandler(req, res)
+);
+
+projectRouter.get("/:projectName", verifyJwt, (req, res) =>
+  controller.getProjectHandler(req, res)
+);
+
+projectRouter.get("/:projectName/deployment", verifyJwt, (req, res) =>
+  controller.getDeploymentsHandler(req, res)
 );
 
 projectRouter.post("/:projectId/deployment", verifyJwt, (req, res) =>

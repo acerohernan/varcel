@@ -7,6 +7,7 @@ import { ProjectCard } from "../components/project-card";
 import { AddResourceMenu } from "../components/add-resource-menu";
 
 import { useProjectsWithLatestDeployment } from "@/hooks/query/useProjectsWithLatestDeployment";
+import { ProjectCardSkeleton } from "../components/project-card/skeleton";
 
 export const HomePage = () => {
   const { data: projects, isLoading, isError } = useProjectsWithLatestDeployment();
@@ -14,7 +15,16 @@ export const HomePage = () => {
   const [value, setValue] = useState("");
 
   const renderContent = useCallback(() => {
-    if (isLoading) return <div className="text-center mt-10">Loading...</div>;
+    if (isLoading)
+      return (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array(6)
+            .fill(0)
+            .map(() => (
+              <ProjectCardSkeleton key={Math.random()} />
+            ))}
+        </div>
+      );
 
     if (isError || !projects)
       return <div className="text-center mt-10">Something went wrong at retrieving projects!</div>;

@@ -21,6 +21,10 @@ import {
   TCreateDeploymentDTO,
 } from "../dtos/create-deployment.dto";
 import { ProjectRepository } from "../repositories/project.repository";
+import {
+  GetDeploymentsDTO,
+  TGetDeploymentsDTO,
+} from "../dtos/get-deployments.dto";
 
 @injectable()
 export class DeploymentService {
@@ -135,5 +139,21 @@ export class DeploymentService {
     await this.deploymentRepository.create(newDeployment);
 
     // Send the sqs event
+  }
+
+  async getDeployments(dto: TGetDeploymentsDTO) {
+    const validation = GetDeploymentsDTO.safeParse(dto);
+
+    if (!validation.success)
+      throw new BadRequestError(getZodErrors(validation.error));
+
+    const { userId, projectName, page, perPage } = dto;
+
+    return this.deploymentRepository.getAll({
+      userId,
+      projectName,
+      limit: 4,
+      offset: 0,
+    });
   }
 }

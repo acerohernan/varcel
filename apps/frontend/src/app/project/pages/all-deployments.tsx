@@ -1,10 +1,20 @@
+import { Link, useParams } from "react-router-dom";
+import { LuGitBranch, LuGitCommit } from "react-icons/lu";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { LuGitBranch, LuGitCommit } from "react-icons/lu";
 import { DeploymentMenu } from "../components/deployment-menu";
-import { Link } from "react-router-dom";
+import { useDeployments } from "@/hooks/query/useDeployments";
 
 export const AllDeploymentsPage = () => {
+  const { projectName } = useParams();
+
+  if (!projectName) return null;
+
+  const { data: deployments, isLoading, isError } = useDeployments({ projectId: projectName });
+
+  console.log(deployments);
+
   return (
     <div>
       <div className="bg-background border-b">
