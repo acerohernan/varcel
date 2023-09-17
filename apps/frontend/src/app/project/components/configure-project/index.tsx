@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
@@ -12,13 +12,14 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 import { useGitRepository } from "@/hooks/query/useGitRepository";
 import { CreateProjectShema, ICreateProjectFormValues } from "@/api/project/schemas";
-import { isError, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { API } from "@/api";
 import { useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
 export const ConfigureProjectCard = () => {
   const [params] = useSearchParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   const repoUrl = params.get("url");
@@ -31,6 +32,26 @@ export const ConfigureProjectCard = () => {
 
   const mutation = useMutation({
     mutationFn: (form: ICreateProjectFormValues) => API.project.createProject(form),
+    onError: () => {
+      toast({
+        title: "Error at creating project",
+        description: "Please try again later or contact the developer!",
+        variant: "destructive",
+      });
+    },
+    onSuccess: (data, variables) => {
+      const { deploymentId } = data.data;
+      const { projectName } = variables;
+
+      if (!deploymentId)
+        return toast({
+          title: "Error at creating project",
+          description: "Deployment id not found in api response! Contact the developer!",
+          variant: "destructive",
+        });
+
+      navigate(`projects/${projectName}/deployments/${deploymentId}`);
+    },
   });
 
   const form = useForm<ICreateProjectFormValues>({
@@ -60,14 +81,8 @@ export const ConfigureProjectCard = () => {
   }
 
   useEffect(() => {
-    if (!mutation.isError) return;
-
-    toast({
-      title: "Error at creating project",
-      description: "Please try again later or contact the developer!",
-      variant: "destructive",
-    });
-  }, [mutation.isError]);
+    if (!mutation.isSuccess) return;
+  }, [mutation.isSuccess]);
 
   return (
     <Card className="w-full mx-auto bg-background">

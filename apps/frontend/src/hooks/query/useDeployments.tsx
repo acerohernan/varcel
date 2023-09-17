@@ -3,14 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 import { API } from "@/api";
 import { IDeployment } from "@/api/deployment/types";
 
-export const useDeployments = ({ projectId }: { projectId: string }) =>
+export const useDeployments = ({ projectName }: { projectName: string }) =>
   useQuery({
-    queryKey: [projectId, "deployments"],
+    queryKey: [projectName, "deployments"],
     queryFn: async () => {
       try {
-        const response = await API.project.getDeployments({ projectId });
-        return response.data.deployment as IDeployment[];
+        const response = await API.project.getDeployments({ projectName });
+        return response.data.deployments as IDeployment[];
       } catch (error) {
+        console.log(error);
         throw error;
       }
     },

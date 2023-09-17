@@ -13,6 +13,6 @@ export function createProject(formValues: ICreateProjectFormValues) {
   return axiosInstance.post("/project", formValues, { headers: authHeaders() });
 }
 
-export function getDeployments({ projectId }: { projectId: string }) {
-  return axiosInstance.get(`/project/${projectId}/deployment`, { headers: authHeaders() });
+export function getDeployments({ projectName }: { projectName: string }) {
+  return axiosInstance.get(`/project/${projectName}/deployment`, { headers: authHeaders() });
 }

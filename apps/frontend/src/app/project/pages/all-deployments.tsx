@@ -11,9 +11,11 @@ export const AllDeploymentsPage = () => {
 
   if (!projectName) return null;
 
-  const { data: deployments, isLoading, isError } = useDeployments({ projectId: projectName });
+  const { data: deployments, isLoading, isError } = useDeployments({ projectName });
 
-  console.log(deployments);
+  if (isLoading) return <h1>Loading...</h1>;
+
+  if (!deployments || isError) return <h1>Something went wrong!</h1>;
 
   return (
     <div>
@@ -23,50 +25,49 @@ export const AllDeploymentsPage = () => {
         </div>
       </div>
       <div className="grid px-8 my-4 gap-4 max-w-[1300px] mx-auto">
-        {Array(5)
-          .fill(0)
-          .map(() => (
-            <Card className="bg-background" key={Math.random()}>
-              <CardContent className="pt-6 text-sm">
-                <div className="grid grid-cols-[1fr_40px]">
-                  <div className="grid gap-1">
-                    <Link to="/projects/aws-clone/deployments/deploymentId">
-                      aws-clone-qshf6ql86-acerohernan.vercel.app
-                    </Link>
-                    <span className="block text-muted-foreground ">Production (Current)</span>
-                  </div>
-                  <DeploymentMenu />
-                </div>
-                <Separator className="my-4" />
+        {deployments.map((deployment) => (
+          <Card className="bg-background" key={deployment.id}>
+            <CardContent className="pt-6 text-sm">
+              <div className="grid grid-cols-[1fr_40px]">
                 <div className="grid gap-1">
-                  <p className="flex gap-2 items-center text-muted-foreground">
-                    <span className="h-[10px] w-[10px] rounded-full bg-green-400" />
-                    Ready
-                  </p>
-                  <span className="block text-muted-foreground">42s</span>
+                  <Link to={`/projects/${projectName}/deployments/${deployment.id}`}>
+                    aws-clone-qshf6ql86-acerohernan.vercel.app
+                  </Link>
+                  <span className="block text-muted-foreground ">Production (Current)</span>
                 </div>
-                <Separator className="my-4" />
-                <div className="grid gap-1 text-muted-foreground">
-                  <span className="flex items-center gap-2">
-                    <LuGitBranch /> main
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <LuGitCommit />
-                    <a
-                      className="hover:underline cursor-pointer"
-                      href="https://github.com/acerohernan/portfolio/commit/266b0c179c36e806c7b945a5f2089d3eb712dbd6"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      266b0c1 build: Updating svg icons
-                    </a>
-                  </div>
+                <DeploymentMenu />
+              </div>
+              <Separator className="my-4" />
+              <div className="grid gap-1">
+                <p className="flex gap-2 items-center text-muted-foreground">
+                  <span className="h-[10px] w-[10px] rounded-full bg-green-400" />
+                  Ready
+                </p>
+                <span className="block text-muted-foreground">42s</span>
+              </div>
+              <Separator className="my-4" />
+              <div className="grid gap-1 text-muted-foreground">
+                <span className="flex items-center gap-2">
+                  <LuGitBranch /> {deployment.sourceGitBranch}
+                </span>
+                <div className="flex items-center gap-2">
+                  <LuGitCommit />
+                  <a
+                    className="hover:underline cursor-pointer"
+                    href="https://github.com/acerohernan/portfolio/commit/266b0c179c36e806c7b945a5f2089d3eb712dbd6"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {deployment.sourceGitCommitSha.slice(0, 6)}
+                    {deployment.sourceGitCommitMessage}
+                  </a>
                 </div>
-                <Separator className="my-4" />
-                <span className="text-muted-foreground">96d ago by acerohernan</span>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+              <Separator className="my-4" />
+              <span className="text-muted-foreground">96d ago by acerohernan</span>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
