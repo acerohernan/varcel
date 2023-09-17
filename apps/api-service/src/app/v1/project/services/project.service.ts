@@ -53,7 +53,7 @@ export class ProjectService {
     return { projects, totalCount };
   }
 
-  async create(dto: TCreateProjectDTO): Promise<void> {
+  async create(dto: TCreateProjectDTO): Promise<{ deploymentId: string }> {
     const validation = CreateProjectDTO.safeParse(dto);
 
     if (!validation.success)
@@ -68,6 +68,17 @@ export class ProjectService {
       repository,
       buildSettings,
     } = dto;
+
+    // Validate that aq project with the same name for user id dont exists
+    const projectExists = await this.projectRepository.getByUserIdAndName({
+      userId,
+      projectName,
+    });
+
+    if (projectExists)
+      throw new BadRequestError(
+        `You have a project with the same name! Please change it`
+      );
 
     const newProject: NewProject = {
       id: uuid(),
@@ -99,11 +110,13 @@ export class ProjectService {
       envVariables: newEnvVariables,
     });
 
-    await this.deploymentService.create({
+    const { deploymentId } = await this.deploymentService.create({
       userId,
       project: newProject,
       projectRepo: newRepository,
     });
+
+    return { deploymentId };
   }
 
   async getProject(dto: TGetProjectDTO) {

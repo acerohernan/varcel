@@ -50,9 +50,12 @@ export class ProjectController {
 
     if (!user) throw new UnathorizedError("Token malformed");
 
-    await this.projectService.create({ ...req.body, userId: user.id });
+    const { deploymentId } = await this.projectService.create({
+      ...req.body,
+      userId: user.id,
+    });
 
-    res.sendStatus(200);
+    res.send({ deploymentId });
   }
 
   async createDeploymentHandler(req: Request, res: Response) {

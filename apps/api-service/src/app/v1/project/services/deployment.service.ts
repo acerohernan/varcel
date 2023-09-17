@@ -74,7 +74,7 @@ export class DeploymentService {
     userId: string;
     project: Project | NewProject;
     projectRepo: DBProjectRepository | NewProjectRepository;
-  }) {
+  }): Promise<{ deploymentId: string }> {
     const integration = await this.userGhIntegrationRepository.getByUserId(
       userId
     );
@@ -90,7 +90,6 @@ export class DeploymentService {
       );
 
     //Get the latest commit for the configured branch in the repository
-
     const token = await this.githubService.createTokenFromInstallationId({
       installationId: integration.ghInstallationId,
     });
@@ -131,12 +130,12 @@ export class DeploymentService {
       screenshootUrl: "",
     };
 
-    console.log({ newDeployment });
-
     // Create the livekit room
 
     // Save the deployment to database
     await this.deploymentRepository.create(newDeployment);
+
+    return { deploymentId: newDeployment.id! };
 
     // Send the sqs event
   }
