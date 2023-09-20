@@ -21,6 +21,7 @@ export const deployments = pgTable("deployments", {
   sourceGitCommitMessage: varchar("source_git_commit_message").notNull(),
   sourceGitCommitLink: varchar("source_git_commit_link").notNull(),
   buildLogs: text("build_logs").notNull(),
+  buildRoomId: varchar("build_room_id"),
   screenshootUrl: varchar("screenshoot_url").notNull(),
 });
 

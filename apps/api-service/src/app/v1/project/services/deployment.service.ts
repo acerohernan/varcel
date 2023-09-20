@@ -13,6 +13,7 @@ import { BadRequestError, NotFoundError } from "@/lib/errors";
 import { getZodErrors } from "@v1/shared/lib/zod";
 import { CONTAINER_TYPES } from "@v1/shared/container/types";
 import { GithubService } from "@v1/shared/services/github.service";
+import { RealtimeService } from "@v1/shared/services/realtime.service";
 import { UserGhIntegrationRepository } from "@v1/user/repositories/user-gh-integration.repository";
 
 import { DeploymentRepository } from "../repositories/deployment.repository";
@@ -36,7 +37,9 @@ export class DeploymentService {
     @inject(CONTAINER_TYPES.UserGhIntegrationRepository)
     private userGhIntegrationRepository: UserGhIntegrationRepository,
     @inject(CONTAINER_TYPES.GithubService)
-    private githubService: GithubService
+    private githubService: GithubService,
+    @inject(CONTAINER_TYPES.RealtimeService)
+    private realtimeService: RealtimeService
   ) {}
 
   async createNew(dto: TCreateDeploymentDTO) {
@@ -115,6 +118,11 @@ export class DeploymentService {
         `Couldn't find the latest commit for your repository <${repoName}>`
       );
 
+    // Create the realtime room for build logs
+    const { roomId } = await this.realtimeService.createRoom({
+      roomName: uuid(),
+    });
+
     // Create the new deployment in database
     const newDeployment: NewDeployment = {
       id: uuid(),
@@ -128,16 +136,15 @@ export class DeploymentService {
       buildLogs: "",
       durationInSeconds: 0,
       screenshootUrl: "",
+      buildRoomId: roomId,
     };
-
-    // Create the livekit room
 
     // Save the deployment to database
     await this.deploymentRepository.create(newDeployment);
 
-    return { deploymentId: newDeployment.id! };
-
     // Send the sqs event
+
+    return { deploymentId: newDeployment.id! };
   }
 
   async getDeployments(dto: TGetDeploymentsDTO) {

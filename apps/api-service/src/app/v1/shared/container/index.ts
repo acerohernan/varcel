@@ -16,6 +16,7 @@ import { UserRepository } from "../repositories/user.repository";
 import { UserGhIntegrationRepository } from "../../user/repositories/user-gh-integration.repository";
 
 import { CONTAINER_TYPES } from "./types";
+import { RealtimeService } from "../services/realtime.service";
 
 export const container = new Container();
 
@@ -27,6 +28,7 @@ container.bind(CONTAINER_TYPES.ProjectController).to(ProjectController);
 /* Services */
 container.bind(CONTAINER_TYPES.JWTService).to(JWTService);
 container.bind(CONTAINER_TYPES.GithubService).to(GithubService);
+container.bind(CONTAINER_TYPES.RealtimeService).to(RealtimeService);
 container.bind(CONTAINER_TYPES.AuthService).to(AuthService);
 container.bind(CONTAINER_TYPES.UserService).to(UserService);
 container.bind(CONTAINER_TYPES.ProjectService).to(ProjectService);
