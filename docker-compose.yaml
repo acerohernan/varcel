@@ -1,18 +1,40 @@
 version: "3"
 
 services:
-  api-db:
+  postgres:
     image: postgres
     ports:
       - "5432:5432"
-    container_name: api-db
+    container_name: postgres
     volumes:
-      - api-db-vol:/var/lib/postgresql/data
+      - postgres-vol:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=vercel_clone
 
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - redis-data:/data
+
+  livekit:
+    image: livekit/livekit-server
+    container_name: livekit
+    ports:
+      - "7880:7880"
+    command: --dev --config /livekit/config.yaml
+    depends_on:
+      - redis
+    volumes:
+      - $PWD/.livekit:/livekit
+
 volumes:
-  api-db-vol:
+  postgres-vol:
+    driver: local
+  redis-data:
     driver: local
