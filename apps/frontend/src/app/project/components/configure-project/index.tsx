@@ -14,7 +14,6 @@ import { useGitRepository } from "@/hooks/query/useGitRepository";
 import { CreateProjectShema, ICreateProjectFormValues } from "@/api/project/schemas";
 import { useMutation } from "@tanstack/react-query";
 import { API } from "@/api";
-import { useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
 export const ConfigureProjectCard = () => {
@@ -79,10 +78,6 @@ export const ConfigureProjectCard = () => {
   function onSubmit(form: ICreateProjectFormValues) {
     mutation.mutate(form);
   }
-
-  useEffect(() => {
-    if (!mutation.isSuccess) return;
-  }, [mutation.isSuccess]);
 
   return (
     <Card className="w-full mx-auto bg-background">
