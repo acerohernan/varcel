@@ -62,12 +62,14 @@ export class DeploymentService {
         `Not found a repository configured for project with id ${projectId}`
       );
 
-    await this.create({ userId, project, projectRepo });
+    const { deployment } = await this.create({ userId, project, projectRepo });
+
+    await this.deploymentRepository.create(deployment);
   }
 
   /**
-   * @description Protected function to use only inside another service class, do not use it inside a controller. The fn to use
-   * within controllers is `createNew`;
+   * @description Protected function for create all utilities for a new deployment without save it in db, to use only inside another service class, do not use it inside a controller. The fn to use within controllers is `createNew`.
+   * @returns New deployment entity ready to be saved in db.
    */
   async create({
     userId,
@@ -77,7 +79,7 @@ export class DeploymentService {
     userId: string;
     project: Project | NewProject;
     projectRepo: DBProjectRepository | NewProjectRepository;
-  }): Promise<{ deploymentId: string }> {
+  }): Promise<{ deployment: NewDeployment }> {
     const integration = await this.userGhIntegrationRepository.getByUserId(
       userId
     );
@@ -119,9 +121,9 @@ export class DeploymentService {
       );
 
     // Create the realtime room for build logs
-    const { roomId } = await this.realtimeService.createRoom({
+    /* const { roomId } = await this.realtimeService.createRoom({
       roomName: uuid(),
-    });
+    }); */
 
     // Create the new deployment in database
     const newDeployment: NewDeployment = {
@@ -136,15 +138,13 @@ export class DeploymentService {
       buildLogs: "",
       durationInSeconds: 0,
       screenshootUrl: "",
-      buildRoomId: roomId,
+      buildRoomId: null,
     };
-
-    // Save the deployment to database
-    await this.deploymentRepository.create(newDeployment);
 
     // Send the sqs event
 
-    return { deploymentId: newDeployment.id! };
+    // return the new deployment
+    return { deployment: newDeployment };
   }
 
   async getDeployments(dto: TGetDeploymentsDTO) {

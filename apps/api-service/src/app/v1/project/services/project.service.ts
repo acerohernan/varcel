@@ -69,7 +69,7 @@ export class ProjectService {
       buildSettings,
     } = dto;
 
-    // Validate that aq project with the same name for user id dont exists
+    // Validate that a project with the same name for user id dont exists
     const projectExists = await this.projectRepository.getByUserIdAndName({
       userId,
       projectName,
@@ -78,6 +78,16 @@ export class ProjectService {
     if (projectExists)
       throw new BadRequestError(
         `You have a project with the same name! Please change it`
+      );
+
+    // Verify that the subdomain is globally unique
+    const projectSubdomainIsTaken = await this.projectRepository.getBySubdomain(
+      projectSubdomain
+    );
+
+    if (projectSubdomainIsTaken)
+      throw new BadRequestError(
+        `The sudomain is taken, please choose another one!`
       );
 
     const newProject: NewProject = {
@@ -103,20 +113,21 @@ export class ProjectService {
       })
     );
 
-    await this.projectRepository.create({
-      project: newProject,
-      repository: newRepository,
-      buildSettings: newBuildSettings,
-      envVariables: newEnvVariables,
-    });
-
-    const { deploymentId } = await this.deploymentService.create({
+    const { deployment } = await this.deploymentService.create({
       userId,
       project: newProject,
       projectRepo: newRepository,
     });
 
-    return { deploymentId };
+    await this.projectRepository.create({
+      project: newProject,
+      repository: newRepository,
+      buildSettings: newBuildSettings,
+      envVariables: newEnvVariables,
+      deployment,
+    });
+
+    return { deploymentId: deployment.id! };
   }
 
   async getProject(dto: TGetProjectDTO) {
@@ -130,6 +141,9 @@ export class ProjectService {
     const project = await this.projectRepository.getByUserIdAndName({
       userId,
       projectName,
+      withEntity: {
+        lastDeployment: true,
+      },
     });
 
     if (!project)
