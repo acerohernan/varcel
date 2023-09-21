@@ -1,0 +1,22 @@
+{
+  "name": "vercelclone",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/acerohernan/ts-vercel-clone.git",
+  "author": "Hernan Acero @acerohernan <contacto.acero.hernan@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "prettier": "^3.0.3"
+  },
+  "scripts": {
+    "api": "yarn workspace @vercelclone/api",
+    "build": "yarn workspace @vercelclone/build",
+    "web": "yarn workspace @vercelclone/frontend",
+    "core": "yarn workspace @vercelclone/core"
+  }
+}

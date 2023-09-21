@@ -1,7 +1,7 @@
 import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
-import { primaryKeys, timestamps } from "@/db/utils";
+import { primaryKeys, timestamps } from "../../utils";
 
 import { tiers } from "../tier";
 import { userGhIntegrations } from "./gh-integration";
@@ -31,3 +31,5 @@ export const usersRelations = relations(users, ({ one, many }) => ({
     references: [projectsCount.userId],
   }),
 }));
+
+export * from "./gh-integration";

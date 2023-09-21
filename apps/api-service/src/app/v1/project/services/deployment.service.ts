@@ -7,7 +7,7 @@ import {
   NewProjectRepository,
   Project,
   ProjectRepository as DBProjectRepository,
-} from "@/db/types";
+} from "@vercelclone/core/src/db/";
 import { BadRequestError, NotFoundError } from "@/lib/errors";
 
 import { getZodErrors } from "@v1/shared/lib/zod";
@@ -80,9 +80,8 @@ export class DeploymentService {
     project: Project | NewProject;
     projectRepo: DBProjectRepository | NewProjectRepository;
   }): Promise<{ deployment: NewDeployment }> {
-    const integration = await this.userGhIntegrationRepository.getByUserId(
-      userId
-    );
+    const integration =
+      await this.userGhIntegrationRepository.getByUserId(userId);
 
     if (!integration)
       throw new NotFoundError(

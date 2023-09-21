@@ -9,12 +9,9 @@ export const projectsCount = pgTable("projects_count", {
   totalCount: integer("total_count").default(0).notNull(),
 });
 
-export const projectsBuildSettingsRelations = relations(
-  projectsCount,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [projectsCount.userId],
-      references: [users.id],
-    }),
-  })
-);
+export const projectsCountRelations = relations(projectsCount, ({ one }) => ({
+  user: one(users, {
+    fields: [projectsCount.userId],
+    references: [users.id],
+  }),
+}));

@@ -1,13 +1,15 @@
 import { and, eq, sql } from "drizzle-orm";
 import { injectable } from "inversify";
+import {
+  Deployment,
+  NewDeployment,
+  projects,
+  deployments,
+  deploymentsCount,
+  lastDeployments,
+} from "@vercelclone/core/src/db";
 
 import { db } from "@/db";
-import { deployments } from "@/db/schema/deployment";
-import { Deployment, NewDeployment } from "@/db/types";
-import { deploymentsCount } from "@/db/schema/deployment/count";
-import { lastDeployments } from "@/db/schema/deployment/last-deployment";
-import { projects } from "@/db/schema/project";
-
 export interface IDeploymentRepository {
   create: (deployment: NewDeployment) => Promise<void>;
   getAll: (params: {

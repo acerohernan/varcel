@@ -7,7 +7,7 @@ import {
   NewProjectBuildSettings,
   NewProjectEnvVariable,
   NewProjectRepository,
-} from "@/db/types";
+} from "@vercelclone/core/src/db/";
 
 import { CONTAINER_TYPES } from "@v1/shared/container/types";
 import { getZodErrors } from "@v1/shared/lib/zod";
@@ -81,9 +81,8 @@ export class ProjectService {
       );
 
     // Verify that the subdomain is globally unique
-    const projectSubdomainIsTaken = await this.projectRepository.getBySubdomain(
-      projectSubdomain
-    );
+    const projectSubdomainIsTaken =
+      await this.projectRepository.getBySubdomain(projectSubdomain);
 
     if (projectSubdomainIsTaken)
       throw new BadRequestError(

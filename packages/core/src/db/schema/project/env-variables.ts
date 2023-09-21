@@ -1,4 +1,4 @@
-import { primaryKeys, timestamps } from "@/db/utils";
+import { primaryKeys, timestamps } from "../../utils";
 import { relations } from "drizzle-orm";
 import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 import { projects } from ".";
@@ -11,7 +11,7 @@ export const projectEnvVariables = pgTable("project_env_variables", {
   value: varchar("value").notNull(),
 });
 
-export const projectsBuildSettingsRelations = relations(
+export const projectsEnvVariablesRelations = relations(
   projectEnvVariables,
   ({ one }) => ({
     project: one(projects, {

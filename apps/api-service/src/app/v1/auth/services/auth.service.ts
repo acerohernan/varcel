@@ -1,9 +1,8 @@
 import { v4 as uuid } from "uuid";
 import { inject, injectable } from "inversify";
+import { NewUser, NewUserGhIntegration } from "@vercelclone/core/src/db";
 
 import { BadRequestError } from "@/lib/errors";
-
-import { NewUser, NewUserGhIntegration } from "@/db/types";
 
 import { getZodErrors } from "@v1/shared/lib/zod";
 import { JWTService } from "@v1/shared/services/jwt.service";

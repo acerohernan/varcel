@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { integer, pgTable, uuid, varchar, text } from "drizzle-orm/pg-core";
 
-import { primaryKeys, timestamps } from "@/db/utils";
+import { primaryKeys, timestamps } from "../../utils";
 
 import { projects } from "../project";
 
@@ -31,3 +31,6 @@ export const deploymentsRelations = relations(deployments, ({ one }) => ({
     references: [projects.id],
   }),
 }));
+
+export * from "./count";
+export * from "./last-deployment";

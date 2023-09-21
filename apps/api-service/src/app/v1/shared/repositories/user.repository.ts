@@ -8,10 +8,10 @@ import {
   NewUserGhIntegration,
   User,
   UserGhIntegration,
-} from "@/db/types";
-import { users } from "@/db/schema/user";
-import { userGhIntegrations } from "@/db/schema/user/gh-integration";
-import { projectsCount } from "@/db/schema/project/count";
+  users,
+  userGhIntegrations,
+  projectsCount,
+} from "@vercelclone/core/src/db";
 
 export interface IUserRepository {
   getById: (id: string) => Promise<User | undefined>;

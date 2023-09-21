@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { pgTable, uuid, integer } from "drizzle-orm/pg-core";
 
-import { primaryKeys, timestamps } from "@/db/utils";
+import { primaryKeys, timestamps } from "../../utils";
 
 import { users } from "./index";
 

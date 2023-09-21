@@ -3,14 +3,17 @@ import { injectable } from "inversify";
 import { and, eq, sql } from "drizzle-orm";
 
 import { db } from "@/db";
-import { projects } from "@/db/schema/project";
-import { deployments } from "@/db/schema/deployment";
-import { projectsCount } from "@/db/schema/project/count";
-import { deploymentsCount } from "@/db/schema/deployment/count";
-import { projectRepositories } from "@/db/schema/project/repository";
-import { projectEnvVariables } from "@/db/schema/project/env-variables";
-import { lastDeployments } from "@/db/schema/deployment/last-deployment";
-import { projectBuildSettings } from "@/db/schema/project/build-settings";
+import {
+  projects,
+  deployments,
+  projectsCount,
+  deploymentsCount,
+  projectRepositories,
+  projectEnvVariables,
+  lastDeployments,
+  projectBuildSettings,
+} from "@vercelclone/core/src/db";
+
 import {
   NewProjectRepository,
   NewProject,
@@ -20,7 +23,7 @@ import {
   ProjectRepository as DBProjectRepository,
   ProjectBuildSettings,
   NewDeployment,
-} from "@/db/types";
+} from "@vercelclone/core/src/db/";
 
 interface ICreateParams {
   project: NewProject;

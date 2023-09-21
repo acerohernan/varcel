@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { index, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 
-import { primaryKeys, timestamps } from "@/db/utils";
+import { primaryKeys, timestamps } from "../../utils";
 
 import { projectBuildSettings } from "./build-settings";
 import { projectRepositories } from "./repository";
@@ -52,3 +52,8 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
     references: [lastDeployments.projectId],
   }),
 }));
+
+export * from "./build-settings";
+export * from "./count";
+export * from "./env-variables";
+export * from "./repository";

@@ -1,0 +1,14 @@
+{
+  "name": "@vercelclone/core",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "migrate:gen": "yarn drizzle-kit generate:pg",
+    "migrate:push": "yarn drizzle-kit push:pg"
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1",
+    "drizzle-kit": "^0.19.13"
+  }
+}
