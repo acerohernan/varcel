@@ -1,0 +1,29 @@
+{
+  "name": "@vercelclone/build",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development tsnd -r tsconfig-paths/register --transpile-only src/index.ts",
+    "build": "rm -rf dist && tsc && tsc-alias",
+    "start": "NODE_ENV=production node dist/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.6.2",
+    "cross-env": "^7.0.3",
+    "drizzle-kit": "^0.19.13",
+    "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.8.7",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@vercelclone/core": "*",
+    "dotenv": "^16.3.1",
+    "drizzle-orm": "^0.28.6",
+    "livekit-server-sdk": "^1.2.6",
+    "postgres": "^3.3.5",
+    "winston": "^3.10.0",
+    "zod": "^3.22.2"
+  }
+}
