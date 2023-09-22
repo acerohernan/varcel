@@ -18,6 +18,8 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@octokit/auth-app": "^6.0.0",
+    "@octokit/rest": "^20.0.1",
     "@vercelclone/core": "*",
     "dotenv": "^16.3.1",
     "drizzle-orm": "^0.28.6",

@@ -7,8 +7,8 @@ import {
   IUserRepository,
 } from "./interfaces/repositories";
 
-import { GithubService } from "./services/git-repo.service";
 import { IGitService } from "./interfaces/services";
+import { logger } from "./config/logger";
 
 interface InitParams {
   deploymentId: string;
@@ -32,6 +32,8 @@ export class BuildProcess {
 
     const deployment = await this.deploymentRepository.getById(deploymentId);
 
+    console.log(deployment);
+
     if (!deployment)
       throw new Error(`couldn't find deloyment with id ${deploymentId}`);
 
@@ -54,7 +56,7 @@ export class BuildProcess {
 
       const repoName = "livekit-whiteboard";
       const repoOwner = "acerohernan";
-      const commitSha = "e47202079d84c6fe295249e4a8e18877ac5a874e";
+      const commitSha = "0e663b5b8b598a463e1b0268dfb42c8fe87cc253";
       const repoUrl = `https://github.com/${repoOwner}/${repoName}.git`;
 
       const localPath = path.resolve(
@@ -63,21 +65,17 @@ export class BuildProcess {
         `tmp/${repoOwner}/${repoName}/${commitSha}`
       );
 
+      const { projectId, sourceGitBranch } = deployment;
+
       await this.gitService.cloneRepository({
         repoUrl,
+        branch: sourceGitBranch,
         commitSha,
         localPath,
         auth: integration.ghInstallationId,
       });
 
-      const { projectId } = deployment;
-
-      const project = await this.projectRepository.getById(projectId);
-
-      if (!project)
-        throw new Error(
-          `couldn't find project with id ${projectId} for deployment ${deploymentId}`
-        );
+      logger.info(`repository from ${repoUrl} has been cloned!`);
 
       const buildSettings =
         await this.projectRepository.getBuildSettings(projectId);
@@ -100,6 +98,7 @@ export class BuildProcess {
 
       // Update deployment status to success
     } catch (error) {
+      console.log(error);
       // Error handling
     }
   }
@@ -115,7 +114,9 @@ export class BuildProcess {
   }) {
     const commands = ["yarn install", "yarn build"];
 
-    await new Promise<void>((resolve, reject) => {
+    console.log(`Creating app bundle for repo in ${codePath}`);
+
+    /*  await new Promise<void>((resolve, reject) => {
       const child = spawn(commands.join(" && "), {
         shell: true,
         cwd: codePath,
@@ -133,7 +134,7 @@ export class BuildProcess {
         console.log("Child exited with code: " + exitCode);
         resolve();
       });
-    });
+    }); */
 
     // Make bundle
     // Stop streaming logs

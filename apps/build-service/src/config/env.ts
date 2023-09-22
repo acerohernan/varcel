@@ -11,6 +11,9 @@ const envSchema = z.object({
   LIVEKIT_SECRET: z.string().nonempty(),
 
   POSTGRES_URL: z.string().nonempty(),
+
+  GITHUB_APP_ID: z.string().nonempty(),
+  GITHUB_APP_SECRET_KEY: z.string().nonempty(),
 });
 
 const validation = envSchema.safeParse(process.env);

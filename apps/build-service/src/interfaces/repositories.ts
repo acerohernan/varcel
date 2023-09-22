@@ -1,5 +1,6 @@
 import {
   Deployment,
+  Project,
   ProjectBuildSettings,
   User,
   UserGhIntegration,
@@ -16,6 +17,6 @@ export interface IUserRepository {
 }
 
 export interface IProjectRepository {
-  getById: (id: string) => Promise<User | undefined>;
+  getById: (id: string) => Promise<Project | undefined>;
   getBuildSettings: (id: string) => Promise<ProjectBuildSettings | undefined>;
 }

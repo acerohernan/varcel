@@ -1,7 +1,8 @@
 export interface IGitServiceCloneParams {
   repoUrl: string;
-  localPath: string;
+  branch: string;
   commitSha: string;
+  localPath: string;
   auth: any;
 }
 
