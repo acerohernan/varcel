@@ -39,8 +39,6 @@ export class GithubService implements IGitService {
 
     const command = `git clone --depth 3 --branch ${branch} --single-branch  --no-shallow-submodules ${repoUrl} ${localPath} && cd ${localPath} && git reset --hard ${commitSha}`;
 
-    console.log({ command });
-
     await new Promise<void>((resolve, reject) => {
       const child = spawn(command, { shell: true });
 
@@ -57,11 +55,6 @@ export class GithubService implements IGitService {
         resolve();
       });
     });
-
-    // cd repo-to-clone
-    // git clone --depth 3 --branch master --single-branch  --no-shallow-submodules https://github.com/cameronmcnz/rock-paper-scissors.git cloned-repository
-    // cd repo-to-clone/cloned-repository
-    // git reset --hard {commit-sha}
   }
 
   private async getAccessToken(installationId: number): Promise<string> {
@@ -74,7 +67,7 @@ export class GithubService implements IGitService {
 
       if (!accessToken)
         throw Error(
-          `access token for installation id ${installationId} couldnt be created!`
+          `access token for installation id ${installationId} couldn't be created!`
         );
 
       return accessToken;

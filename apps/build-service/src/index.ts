@@ -4,6 +4,7 @@ import { DeploymentRepository } from "./repositories/deployment.repository";
 
 import { GithubService } from "./services/git-repo.service";
 import { BuildProcess } from "./build";
+import { BundlerService } from "./services/bundler.service";
 
 async function main() {
   try {
@@ -11,8 +12,15 @@ async function main() {
     const deployRepo = new DeploymentRepository();
     const projectRepo = new ProjectRepository();
     const gitSvc = new GithubService();
+    const bundlerSvc = new BundlerService();
 
-    const process = new BuildProcess(userRepo, deployRepo, projectRepo, gitSvc);
+    const process = new BuildProcess(
+      userRepo,
+      deployRepo,
+      projectRepo,
+      gitSvc,
+      bundlerSvc
+    );
 
     const userId = "cf65100b-e43e-40a9-a837-00f8bacb560c";
     const deploymentId = "36e4a09c-1b60-4d64-bec1-e280aec96c12";

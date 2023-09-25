@@ -2,6 +2,7 @@ import {
   Deployment,
   Project,
   ProjectBuildSettings,
+  ProjectRepository,
   User,
   UserGhIntegration,
 } from "@vercelclone/core/src/db";
@@ -19,4 +20,5 @@ export interface IUserRepository {
 export interface IProjectRepository {
   getById: (id: string) => Promise<Project | undefined>;
   getBuildSettings: (id: string) => Promise<ProjectBuildSettings | undefined>;
+  getGitRepository: (id: string) => Promise<ProjectRepository | undefined>;
 }

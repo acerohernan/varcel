@@ -1,14 +1,15 @@
 import path from "path";
-import { spawn } from "child_process";
+import fs from "fs";
+import fsPromises from "fs/promises";
+
+import { logger } from "./config/logger";
 
 import {
   IDeploymentRepository,
   IProjectRepository,
   IUserRepository,
 } from "./interfaces/repositories";
-
-import { IGitService } from "./interfaces/services";
-import { logger } from "./config/logger";
+import { IBundlerService, IGitService } from "./interfaces/services";
 
 interface InitParams {
   deploymentId: string;
@@ -17,32 +18,50 @@ interface InitParams {
 
 export class BuildProcess {
   constructor(
-    private userRepository: IUserRepository,
-    private deploymentRepository: IDeploymentRepository,
-    private projectRepository: IProjectRepository,
-    private gitService: IGitService
+    private userRepo: IUserRepository,
+    private deploymentRepo: IDeploymentRepository,
+    private projectRepo: IProjectRepository,
+    private gitSvc: IGitService,
+    private bundlerSvc: IBundlerService
   ) {}
 
   async init(params: InitParams): Promise<void> {
     const { userId, deploymentId } = params;
 
-    const user = await this.userRepository.getById(userId);
+    const user = await this.userRepo.getById(userId);
 
     if (!user) throw new Error(`couldn't find user with id ${userId}`);
 
-    const deployment = await this.deploymentRepository.getById(deploymentId);
-
-    console.log(deployment);
+    const deployment = await this.deploymentRepo.getById(deploymentId);
 
     if (!deployment)
-      throw new Error(`couldn't find deloyment with id ${deploymentId}`);
+      throw new Error(`couldn't find deployment with id ${deploymentId}`);
+
+    const { projectId, sourceGitBranch, sourceGitCommitSha } = deployment;
+
+    const repository = await this.projectRepo.getGitRepository(projectId);
+
+    if (!repository)
+      throw new Error(
+        `couldn't find project repository with for project ${projectId}`
+      );
+
+    const { namespace } = repository;
+
+    const repoUrl = `https://github.com/${namespace}.git`;
+
+    const tmpPath = path.resolve(
+      __dirname,
+      "..",
+      `tmp/${namespace}/${sourceGitCommitSha}`
+    );
 
     try {
-      await this.deploymentRepository.update(deployment.id, {
+      await this.deploymentRepo.update(deployment.id, {
         status: "building",
       });
 
-      const integration = await this.userRepository.getGhIntegration(user.id);
+      const integration = await this.userRepo.getGhIntegration(user.id);
 
       if (!integration)
         throw new Error(
@@ -54,89 +73,61 @@ export class BuildProcess {
           `gh integration for user with id ${userId} don't have a gh installation id`
         );
 
-      const repoName = "livekit-whiteboard";
-      const repoOwner = "acerohernan";
-      const commitSha = "0e663b5b8b598a463e1b0268dfb42c8fe87cc253";
-      const repoUrl = `https://github.com/${repoOwner}/${repoName}.git`;
+      const folderExists = fs.existsSync(tmpPath);
 
-      const localPath = path.resolve(
-        __dirname,
-        "..",
-        `tmp/${repoOwner}/${repoName}/${commitSha}`
-      );
+      if (folderExists) throw new Error(`folder in ${tmpPath} already exists`);
 
-      const { projectId, sourceGitBranch } = deployment;
-
-      await this.gitService.cloneRepository({
+      await this.gitSvc.cloneRepository({
         repoUrl,
         branch: sourceGitBranch,
-        commitSha,
-        localPath,
+        commitSha: sourceGitCommitSha,
+        localPath: tmpPath,
         auth: integration.ghInstallationId,
       });
 
       logger.info(`repository from ${repoUrl} has been cloned!`);
 
-      const buildSettings =
-        await this.projectRepository.getBuildSettings(projectId);
+      const buildSettings = await this.projectRepo.getBuildSettings(projectId);
 
       if (!buildSettings)
         throw new Error(
           `couldn't find project build settings for project ${projectId}`
         );
 
-      await this.createDeploymentBundle({
-        codePath: localPath,
+      const { bundlePath } = await this.bundlerSvc.bundle({
+        codePath: tmpPath,
         ...buildSettings,
       });
 
-      /* Try in local to this */
+      logger.info(`build successfully completed! bundle folder ${bundlePath}`);
 
-      // Upload to S3
+      // Provisionary
+      const s3Path = path.resolve(
+        __dirname,
+        "..",
+        "tmp/s3",
+        namespace,
+        sourceGitCommitSha
+      );
 
-      // Update cloudfront rules
+      await fsPromises.cp(bundlePath, s3Path, { recursive: true });
 
-      // Update deployment status to success
+      logger.info(`build successfully copied to s3!`);
+
+      await fsPromises.rm(tmpPath, { force: true, recursive: true });
+
+      logger.info(`source code successfully deleted!`);
     } catch (error) {
+      logger.error(`error happened at executing the build process!`);
+
       console.log(error);
-      // Error handling
+
+      const folderExists = fs.existsSync(tmpPath);
+
+      if (folderExists)
+        await fsPromises.rm(tmpPath, { force: true, recursive: true });
+
+      logger.info(`deployment folder deleted successfully!`);
     }
-  }
-
-  private async createDeploymentBundle({
-    codePath,
-  }: {
-    codePath: string;
-    buildCommand: string;
-    outputDir: string;
-    installCommand: string;
-    rootDirectory: string;
-  }) {
-    const commands = ["yarn install", "yarn build"];
-
-    console.log(`Creating app bundle for repo in ${codePath}`);
-
-    /*  await new Promise<void>((resolve, reject) => {
-      const child = spawn(commands.join(" && "), {
-        shell: true,
-        cwd: codePath,
-      });
-
-      child.stderr.on("data", (data) => {
-        console.error("STDERR:", data.toString());
-      });
-
-      child.stdout.on("data", (data) => {
-        console.log("STDOUT:", data.toString());
-      });
-
-      child.on("exit", (exitCode) => {
-        console.log("Child exited with code: " + exitCode);
-        resolve();
-      });
-    }); */
-
-    // Make bundle
-    // Stop streaming logs
   }
 }

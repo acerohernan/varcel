@@ -5,6 +5,7 @@ import {
   ProjectBuildSettings,
   projectBuildSettings,
   projects,
+  ProjectRepository as DBProjectRepository,
 } from "@vercelclone/core/src/db";
 
 import { db } from "@/db";
@@ -20,6 +21,14 @@ export class ProjectRepository implements IProjectRepository {
     projectId: string
   ): Promise<ProjectBuildSettings | undefined> {
     return db.query.projectBuildSettings.findFirst({
+      where: eq(projectBuildSettings.projectId, projectId),
+    });
+  }
+
+  async getGitRepository(
+    projectId: string
+  ): Promise<DBProjectRepository | undefined> {
+    return db.query.projectRepositories.findFirst({
       where: eq(projectBuildSettings.projectId, projectId),
     });
   }
