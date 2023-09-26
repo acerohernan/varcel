@@ -5,6 +5,7 @@ import { container } from "@v1/shared/container";
 import { CONTAINER_TYPES } from "@v1/shared/container/types";
 
 import { UserController } from "./user.controller";
+import { githubSignatureValidator } from "./middlewares/githubSignatureValidator";
 
 export const userRouter = Router();
 
@@ -18,6 +19,10 @@ userRouter.get("/", verifyJwt, (req, res) =>
 
 userRouter.get("/repository/github/setup", (req, res) =>
   controller.setupGithubIntegrationHandler(req, res)
+);
+
+userRouter.post("/webhooks/github", githubSignatureValidator, (req, res) =>
+  controller.githubWebhookHandler(req, res)
 );
 
 userRouter.get("/repository", verifyJwt, (req, res) =>

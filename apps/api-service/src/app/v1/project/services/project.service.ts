@@ -1,26 +1,28 @@
-import { v4 as uuid } from "uuid";
-import { inject, injectable } from "inversify";
-
-import { BadRequestError, NotFoundError } from "@/lib/errors";
 import {
   NewProject,
   NewProjectBuildSettings,
   NewProjectEnvVariable,
   NewProjectRepository,
 } from "@vercelclone/core/src/db/";
+import { v4 as uuid } from "uuid";
+import { inject, injectable } from "inversify";
 
-import { CONTAINER_TYPES } from "@v1/shared/container/types";
+import { BadRequestError, NotFoundError } from "@/lib/errors";
+
 import { getZodErrors } from "@v1/shared/lib/zod";
-
-import { ProjectRepository } from "../repositories/project.repository";
+import { CONTAINER_TYPES } from "@v1/shared/container/types";
+import { GithubService } from "@v1/shared/services/github.service";
+import { UserGhIntegrationRepository } from "@v1/user/repositories/user-gh-integration.repository";
 
 import {
   CreateProjectDTO,
   TCreateProjectDTO,
 } from "../dtos/create-project.dto";
 import { GetProjectsDTO, TGetProjectsDTO } from "../dtos/get-projects.dto";
-import { DeploymentService } from "./deployment.service";
 import { GetProjectDTO, TGetProjectDTO } from "../dtos/get-project.dto";
+
+import { ProjectRepository } from "../repositories/project.repository";
+import { DeploymentService } from "./deployment.service";
 
 @injectable()
 export class ProjectService {
@@ -28,7 +30,11 @@ export class ProjectService {
     @inject(CONTAINER_TYPES.ProjectRepository)
     private projectRepository: ProjectRepository,
     @inject(CONTAINER_TYPES.DeploymentService)
-    private deploymentService: DeploymentService
+    private deploymentService: DeploymentService,
+    @inject(CONTAINER_TYPES.GithubService)
+    private githubService: GithubService,
+    @inject(CONTAINER_TYPES.UserGhIntegrationRepository)
+    private userGhIntegrationRepository: UserGhIntegrationRepository
   ) {}
 
   async getAll(
@@ -96,14 +102,22 @@ export class ProjectService {
       name: projectName,
       subdomain: projectSubdomain,
     };
+
+    const repoName = repository.name;
+    const repoOwner = repository.namespace?.split("/")[0];
+
     const newRepository: NewProjectRepository = {
       projectId: newProject.id!,
       ...repository,
+      owner: repoOwner,
+      name: repoName,
     };
+
     const newBuildSettings: NewProjectBuildSettings = {
       projectId: newProject.id!,
       ...buildSettings,
     };
+
     const newEnvVariables: Array<NewProjectEnvVariable> = env.map(
       (variable) => ({
         id: uuid(),
@@ -111,6 +125,34 @@ export class ProjectService {
         ...variable,
       })
     );
+
+    const integration =
+      await this.userGhIntegrationRepository.getByUserId(userId);
+
+    if (!integration)
+      throw new NotFoundError(
+        `Your account hasn't configured a github integration yet!`
+      );
+
+    if (!integration.ghInstallationId)
+      throw new NotFoundError(
+        `You haven't installed the Latin Station's github app!`
+      );
+
+    const token = await this.githubService.createTokenFromInstallationId({
+      installationId: integration.ghInstallationId,
+    });
+
+    if (!token)
+      throw new BadRequestError(
+        `Couldn't create an access token for your installation, check your installion in github and try again.`
+      );
+
+    await this.githubService.setupRepositoryWebhook({
+      token,
+      repoName,
+      repoOwner,
+    });
 
     const { deployment } = await this.deploymentService.create({
       userId,

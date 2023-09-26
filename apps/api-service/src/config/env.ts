@@ -7,6 +7,7 @@ config({});
 
 const envSchema = z.object({
   PORT: z.preprocess(Number, z.number()),
+  BASE_URL: z.string().nonempty(),
   FRONTEND_URL: z.string().nonempty(),
 
   JWT_SECRET: z.string().nonempty(),
@@ -19,6 +20,7 @@ const envSchema = z.object({
   GITHUB_APP_CLIENT_SECRET: z.string().nonempty(),
   GITHUB_APP_ID: z.string().nonempty(),
   GITHUB_APP_SECRET_KEY: z.string().nonempty(),
+  GITHUB_WEBHOOK_SECRET: z.string().nonempty(),
 
   POSTGRES_URL: z.string().nonempty(),
 

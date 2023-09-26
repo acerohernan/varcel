@@ -35,7 +35,7 @@ export class UserGhIntegrationRepository
     });
   }
 
-  async update(id: string, integrationToUpdate: NewUserGhIntegration) {
+  async update(id: string, integrationToUpdate: Partial<UserGhIntegration>) {
     await db
       .update(userGhIntegrations)
       .set(integrationToUpdate)

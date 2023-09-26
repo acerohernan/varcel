@@ -33,6 +33,12 @@ interface ICreateParams {
   deployment: NewDeployment;
 }
 
+interface IGetRespositoryWithOwnerAndNameParams {
+  userId: string;
+  owner: string;
+  name: string;
+}
+
 interface IGetByUserIdAndName {
   userId: string;
   projectName: string;
@@ -48,6 +54,9 @@ export interface IProjectRepository {
   getRepository: (
     projectId: string
   ) => Promise<DBProjectRepository | undefined>;
+  getRepositoriesByOwnerAndName: (
+    params: IGetRespositoryWithOwnerAndNameParams
+  ) => Promise<DBProjectRepository[]>;
   getBuildSettings: (
     projectId: string
   ) => Promise<ProjectBuildSettings | undefined>;
@@ -190,6 +199,26 @@ export class ProjectRepository implements IProjectRepository {
     return db.query.projectRepositories.findFirst({
       where: eq(projectRepositories.projectId, projectId),
     });
+  }
+
+  async getRepositoriesByOwnerAndName({
+    owner,
+    name,
+    userId,
+  }: IGetRespositoryWithOwnerAndNameParams) {
+    const result = await db
+      .select()
+      .from(projectRepositories)
+      .innerJoin(projects, eq(projectRepositories.projectId, projects.id))
+      .where(
+        and(
+          eq(projectRepositories.owner, owner),
+          eq(projectRepositories.name, name),
+          eq(projects.userId, userId)
+        )
+      );
+
+    return result.map((e) => e.project_repositories);
   }
 
   async getBuildSettings(projectId: string) {

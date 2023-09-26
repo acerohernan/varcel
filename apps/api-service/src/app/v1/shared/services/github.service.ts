@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
-import { createAppAuth } from "@octokit/auth-app";
 import { Octokit } from "@octokit/rest";
+import { createAppAuth } from "@octokit/auth-app";
 
 import { env } from "@/config/env";
 import { logger } from "@/config/logger";
@@ -133,6 +133,37 @@ export class GithubService {
       );
       console.log(error);
       return undefined;
+    }
+  }
+
+  async setupRepositoryWebhook({
+    token,
+    repoName,
+    repoOwner,
+  }: {
+    token: string;
+    repoOwner: string;
+    repoName: string;
+  }) {
+    try {
+      const octokit = new Octokit({ auth: token });
+
+      const result = await octokit.repos.createWebhook({
+        owner: repoOwner,
+        repo: repoName,
+        active: true,
+        config: {
+          url: `${env.BASE_URL}/v1/user/webhooks/github`,
+          secret: env.GITHUB_WEBHOOK_SECRET,
+          content_type: "json",
+        },
+      });
+      console.log(result);
+    } catch (error) {
+      logger.error(
+        `Couldn't set up a webhook for repository with name <${repoName}> from owner <${repoOwner}>`
+      );
+      throw error;
     }
   }
 }

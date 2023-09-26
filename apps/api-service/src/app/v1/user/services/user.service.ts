@@ -3,16 +3,17 @@ import { Octokit } from "@octokit/rest";
 import { inject, injectable } from "inversify";
 import { createAppAuth } from "@octokit/auth-app";
 
-import { BadRequestError, NotFoundError } from "@/lib/errors";
-
-import { logger } from "@/config/logger";
 import { env } from "@/config/env";
+import { logger } from "@/config/logger";
+
+import { BadRequestError, NotFoundError } from "@/lib/errors";
 
 import { getZodErrors } from "@v1/shared/lib/zod";
 import { CONTAINER_TYPES } from "@v1/shared/container/types";
+import { GithubService } from "@v1/shared/services/github.service";
 import { UserRepository } from "@v1/shared/repositories/user.repository";
-
-import { UserGhIntegrationRepository } from "../repositories/user-gh-integration.repository";
+import { ProjectRepository } from "@v1/project/repositories/project.repository";
+import { DeploymentService } from "@v1/project/services/deployment.service";
 
 import {
   GetRepositoriesDTO,
@@ -22,12 +23,16 @@ import {
   SetupGithubIntegrationDTO,
   TSetupGithubIntegrationDTO,
 } from "../dtos/setup-gh-integration.dto";
-import { GetUserDTO, TGetUserDTO } from "../dtos/get-user.dto";
 import {
   GetRepositoryDTO,
   TGetRepositoryDTO,
 } from "../dtos/get-repository.dto";
-import { GithubService } from "@v1/shared/services/github.service";
+import {
+  GithubRepositoryWebhookDTO,
+  TGithubRepositoryWebhookDTO,
+} from "../dtos/github-repository-webhook.dto";
+import { GetUserDTO, TGetUserDTO } from "../dtos/get-user.dto";
+import { UserGhIntegrationRepository } from "../repositories/user-gh-integration.repository";
 
 @injectable()
 export class UserService {
@@ -37,7 +42,11 @@ export class UserService {
     @inject(CONTAINER_TYPES.UserGhIntegrationRepository)
     private integrationRepository: UserGhIntegrationRepository,
     @inject(CONTAINER_TYPES.GithubService)
-    private githubService: GithubService
+    private githubService: GithubService,
+    @inject(CONTAINER_TYPES.ProjectRepository)
+    private projectRepository: ProjectRepository,
+    @inject(CONTAINER_TYPES.DeploymentService)
+    private deploymentService: DeploymentService
   ) {}
 
   async getInformation(dto: TGetUserDTO) {
@@ -93,9 +102,8 @@ export class UserService {
     const userGithubId = request.data.id;
 
     // Query a user with the same github id
-    const integration = await this.integrationRepository.getByGhId(
-      userGithubId
-    );
+    const integration =
+      await this.integrationRepository.getByGhId(userGithubId);
 
     if (!integration) return;
 
@@ -185,5 +193,47 @@ export class UserService {
       );
 
     return result.data;
+  }
+
+  async handleGhRepositoryWebhook(dto: TGithubRepositoryWebhookDTO) {
+    const validation = GithubRepositoryWebhookDTO.safeParse(dto);
+
+    if (!validation.success) {
+      const errors = getZodErrors(validation.error);
+      logger.error(
+        `Error validating github repository webhook request, errors: `
+      );
+      console.log(errors);
+      throw new BadRequestError(errors);
+    }
+    const {
+      installation: { id: installationId },
+      repository: { full_name: repoNamespace },
+    } = dto;
+
+    const installation =
+      await this.integrationRepository.getByGhId(installationId);
+
+    if (!installation)
+      throw new BadRequestError(
+        `Not found user for installation ${installationId}`
+      );
+
+    const { userId } = installation;
+    const [owner, name] = repoNamespace.split("/");
+
+    const repositories =
+      await this.projectRepository.getRepositoriesByOwnerAndName({
+        owner,
+        name,
+        userId,
+      });
+
+    if (repositories.length === 0)
+      throw new NotFoundError(
+        `Not found a project connected with this repository!`
+      );
+
+    // await this.deploymentService.createNew({projectId: projectId, userId});
   }
 }

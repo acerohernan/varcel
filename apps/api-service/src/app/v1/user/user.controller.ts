@@ -86,4 +86,10 @@ export class UserController {
 
     res.send({ repository });
   }
+
+  async githubWebhookHandler(req: Request, res: Response) {
+    await this.userService.handleGhRepositoryWebhook(req.body);
+
+    res.sendStatus(200);
+  }
 }
