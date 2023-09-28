@@ -57,6 +57,13 @@
       "when": 1695179991721,
       "tag": "0007_lazy_bedlam",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1695787675675,
+      "tag": "0008_third_dragon_lord",
+      "breakpoints": true
     }
   ]
 }
