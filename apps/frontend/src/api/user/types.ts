@@ -22,3 +22,7 @@ export interface IGitBranch {
     url: string;
   };
 }
+
+export interface IGhIntegrationStatus {
+  isInstalled: boolean;
+}

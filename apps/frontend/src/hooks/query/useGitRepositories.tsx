@@ -10,8 +10,8 @@ export const useRepositories = () =>
       try {
         const response = await API.user.getGitRepositories();
         return response.data.repositories as IGitRepository[];
-      } catch (error: any) {
-        throw new Error(error);
+      } catch (error) {
+        throw error;
       }
     },
     retry: 1,

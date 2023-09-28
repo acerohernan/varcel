@@ -11,7 +11,6 @@ export const useDeployments = ({ projectName }: { projectName: string }) =>
         const response = await API.project.getDeployments({ projectName });
         return response.data.deployments as IDeployment[];
       } catch (error) {
-        console.log(error);
         throw error;
       }
     },

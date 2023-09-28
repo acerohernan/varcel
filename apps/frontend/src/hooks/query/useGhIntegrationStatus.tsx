@@ -1,14 +1,14 @@
 import { API } from "@/api";
-import { IUser } from "@/api/user/types";
+import { IGhIntegrationStatus } from "@/api/user/types";
 import { useQuery } from "@tanstack/react-query";
 
-export const useUser = () =>
+export const useGhIntegrationStatus = () =>
   useQuery({
-    queryKey: ["user"],
+    queryKey: ["user", "integrations", "github"],
     queryFn: async () => {
       try {
-        const response = await API.user.getUser();
-        return response.data.user as IUser;
+        const response = await API.user.getGhIntegrationStatus();
+        return response.data.status as IGhIntegrationStatus;
       } catch (error) {
         throw error;
       }

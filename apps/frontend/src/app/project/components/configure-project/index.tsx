@@ -49,7 +49,7 @@ export const ConfigureProjectCard = () => {
           variant: "destructive",
         });
 
-      navigate(`projects/${projectName}/deployments/${deploymentId}`);
+      navigate(`projects/${projectName}`);
     },
   });
 
@@ -94,6 +94,18 @@ export const ConfigureProjectCard = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Project Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="my-project" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="projectSubdomain"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Project Subdomain</FormLabel>
                   <FormControl>
                     <Input placeholder="my-project" {...field} />
                   </FormControl>

@@ -10,8 +10,8 @@ export const useProjects = () =>
       try {
         const response = await API.project.getProjects();
         return response.data.projects as IProject[];
-      } catch (error: any) {
-        throw new Error(error);
+      } catch (error) {
+        throw error;
       }
     },
     retry: 1,

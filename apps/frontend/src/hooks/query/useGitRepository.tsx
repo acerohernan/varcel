@@ -10,8 +10,8 @@ export const useGitRepository = ({ repoUrl }: { repoUrl: string }) =>
       try {
         const response = await API.user.getGitReposity({ url: repoUrl });
         return response.data.repository as IGitRepository;
-      } catch (error: any) {
-        throw new Error(error);
+      } catch (error) {
+        throw error;
       }
     },
     retry: 1,

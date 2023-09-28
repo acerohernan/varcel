@@ -10,8 +10,8 @@ export const useProjectsWithLatestDeployment = () =>
       try {
         const response = await API.project.getProjects();
         return response.data.projects as IProjectWithLatestDeployment[];
-      } catch (error: any) {
-        throw new Error(error);
+      } catch (error) {
+        throw error;
       }
     },
     retry: 1,
