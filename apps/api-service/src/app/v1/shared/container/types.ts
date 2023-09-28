@@ -3,6 +3,7 @@ export const CONTAINER_TYPES = {
   AuthController: Symbol.for("AuthController"),
   UserController: Symbol.for("UserController"),
   ProjectController: Symbol.for("ProjectController"),
+  WebhooksController: Symbol.for("WebhooksController"),
 
   /* Services */
   JWTService: Symbol.for("JWTService"),
@@ -12,6 +13,7 @@ export const CONTAINER_TYPES = {
   UserService: Symbol.for("UserService"),
   ProjectService: Symbol.for("ProjectService"),
   DeploymentService: Symbol.for("DeploymentService"),
+  GithubWebhookService: Symbol.for("GithubWebhookService"),
 
   /* Repositories */
   UserRepository: Symbol.for("UserRepository"),

@@ -28,12 +28,25 @@ export class UserController {
   }
 
   async setupGithubIntegrationHandler(req: Request, res: Response) {
+    console.log(req.headers, req.query);
     const installationId = parseInt(req.query.installation_id as string);
     const code = req.query.code as string;
 
     await this.userService.setupGithubIntegration({ code, installationId });
 
     res.redirect(`${env.FRONTEND_URL}/new`);
+  }
+
+  async getGithubIntegrationStatusHandler(req: Request, res: Response) {
+    const user: JWTUser = res.locals.user;
+
+    if (!user) throw new UnathorizedError("Invalid JWT");
+
+    const status = await this.userService.getGithubIntegrationStatus({
+      userId: user.id,
+    });
+
+    res.send({ status });
   }
 
   async getRepositoriesHandler(req: Request, res: Response) {
@@ -85,11 +98,5 @@ export class UserController {
     });
 
     res.send({ repository });
-  }
-
-  async githubWebhookHandler(req: Request, res: Response) {
-    await this.userService.handleGhRepositoryWebhook(req.body);
-
-    res.sendStatus(200);
   }
 }

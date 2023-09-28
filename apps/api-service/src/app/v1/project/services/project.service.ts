@@ -105,6 +105,7 @@ export class ProjectService {
 
     const repoName = repository.name;
     const repoOwner = repository.namespace?.split("/")[0];
+    const repoBranch = repository.branch;
 
     const newRepository: NewProjectRepository = {
       projectId: newProject.id!,
@@ -154,10 +155,25 @@ export class ProjectService {
       repoOwner,
     });
 
-    const { deployment } = await this.deploymentService.create({
+    const commit = await this.githubService.getLastestCommit({
+      token,
+      repoName,
+      repoOwner,
+      repoBranch,
+    });
+
+    if (!commit)
+      throw new NotFoundError(
+        `Not found the latest commit for repository ${repository.namespace} in the branch ${repoBranch}`
+      );
+
+    const { deployment } = await this.deploymentService.createByNewProject({
       userId,
       project: newProject,
       projectRepo: newRepository,
+      branch: repoBranch,
+      commitMessage: commit.commit.message,
+      commitSha: commit.sha,
     });
 
     await this.projectRepository.create({
@@ -167,6 +183,8 @@ export class ProjectService {
       envVariables: newEnvVariables,
       deployment,
     });
+
+    // TODO: Send the queue event
 
     return { deploymentId: deployment.id! };
   }

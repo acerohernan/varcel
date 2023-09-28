@@ -23,7 +23,7 @@ export class GithubService {
     installationId,
   }: {
     installationId: number;
-  }): Promise<string | undefined> {
+  }): Promise<string> {
     try {
       const request = await this.appOctokit.apps.createInstallationAccessToken({
         installation_id: installationId,
@@ -31,15 +31,12 @@ export class GithubService {
 
       const accessToken = request.data.token;
 
-      if (!accessToken) return undefined;
-
       return accessToken;
     } catch (error) {
       logger.error(
         `Couldn't create and access token for the installation id <${installationId}>`
       );
-      console.error(error);
-      return undefined;
+      throw error;
     }
   }
 
@@ -76,6 +73,35 @@ export class GithubService {
     }
   }
 
+  async getCommit({
+    token,
+    repoOwner,
+    repoName,
+    commitSha,
+  }: {
+    token: string;
+    repoName: string;
+    repoOwner: string;
+    commitSha: string;
+  }) {
+    try {
+      const octokit = new Octokit({ auth: token });
+
+      const result = await octokit.rest.git.getCommit({
+        owner: repoOwner,
+        repo: repoName,
+        commit_sha: commitSha,
+      });
+
+      return result.data;
+    } catch (error) {
+      logger.error(
+        `Couldn't get the commit ${commitSha} info for repository with name <${repoName}> and from owner <${repoOwner}>`
+      );
+      throw error;
+    }
+  }
+
   async getRepository({
     token,
     repoName,
@@ -98,8 +124,7 @@ export class GithubService {
       logger.error(
         `Couldn't get the repository with name <${repoName}> from owner <${repoOwner}>`
       );
-      console.log(error);
-      return undefined;
+      throw error;
     }
   }
 
@@ -131,8 +156,7 @@ export class GithubService {
       logger.error(
         `Couldn't get the branches from repository with name <${repoName}> from owner <${repoOwner}>`
       );
-      console.log(error);
-      return undefined;
+      throw error;
     }
   }
 
@@ -148,17 +172,16 @@ export class GithubService {
     try {
       const octokit = new Octokit({ auth: token });
 
-      const result = await octokit.repos.createWebhook({
+      await octokit.repos.createWebhook({
         owner: repoOwner,
         repo: repoName,
         active: true,
         config: {
-          url: `${env.BASE_URL}/v1/user/webhooks/github`,
+          url: `${env.BASE_URL}/v1/webhooks/github`,
           secret: env.GITHUB_WEBHOOK_SECRET,
           content_type: "json",
         },
       });
-      console.log(result);
     } catch (error) {
       logger.error(
         `Couldn't set up a webhook for repository with name <${repoName}> from owner <${repoOwner}>`

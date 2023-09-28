@@ -17,12 +17,12 @@ userRouter.get("/", verifyJwt, (req, res) =>
   controller.getUserHandler(req, res)
 );
 
-userRouter.get("/repository/github/setup", (req, res) =>
+userRouter.get("/integration/github/setup", (req, res) =>
   controller.setupGithubIntegrationHandler(req, res)
 );
 
-userRouter.post("/webhooks/github", githubSignatureValidator, (req, res) =>
-  controller.githubWebhookHandler(req, res)
+userRouter.get("/integration/github/status", verifyJwt, (req, res) =>
+  controller.getGithubIntegrationStatusHandler(req, res)
 );
 
 userRouter.get("/repository", verifyJwt, (req, res) =>

@@ -6,8 +6,10 @@ import { UserController } from "@v1/user/user.controller";
 import { UserService } from "@v1/user/services/user.service";
 import { ProjectController } from "@v1/project/project.controller";
 import { ProjectService } from "@v1/project/services/project.service";
-import { ProjectRepository } from "@v1/project/repositories/project.repository";
+import { WebhooksController } from "@v1/webhooks/webhooks.controller";
 import { DeploymentService } from "@v1/project/services/deployment.service";
+import { ProjectRepository } from "@v1/project/repositories/project.repository";
+import { GithubWebhooksService } from "@v1/webhooks/services/gh-webhooks.service";
 import { DeploymentRepository } from "@v1/project/repositories/deployment.repository";
 
 import { JWTService } from "../services/jwt.service";
@@ -24,6 +26,7 @@ export const container = new Container();
 container.bind(CONTAINER_TYPES.AuthController).to(AuthController);
 container.bind(CONTAINER_TYPES.UserController).to(UserController);
 container.bind(CONTAINER_TYPES.ProjectController).to(ProjectController);
+container.bind(CONTAINER_TYPES.WebhooksController).to(WebhooksController);
 
 /* Services */
 container.bind(CONTAINER_TYPES.JWTService).to(JWTService);
@@ -33,6 +36,7 @@ container.bind(CONTAINER_TYPES.AuthService).to(AuthService);
 container.bind(CONTAINER_TYPES.UserService).to(UserService);
 container.bind(CONTAINER_TYPES.ProjectService).to(ProjectService);
 container.bind(CONTAINER_TYPES.DeploymentService).to(DeploymentService);
+container.bind(CONTAINER_TYPES.GithubWebhookService).to(GithubWebhooksService);
 
 /* Repositories */
 container.bind(CONTAINER_TYPES.UserRepository).to(UserRepository);

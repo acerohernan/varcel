@@ -6,14 +6,18 @@ import { createAppAuth } from "@octokit/auth-app";
 import { env } from "@/config/env";
 import { logger } from "@/config/logger";
 
-import { BadRequestError, NotFoundError } from "@/lib/errors";
+import {
+  BadRequestError,
+  InternalServerError,
+  NotFoundError,
+} from "@/lib/errors";
 
 import { getZodErrors } from "@v1/shared/lib/zod";
 import { CONTAINER_TYPES } from "@v1/shared/container/types";
 import { GithubService } from "@v1/shared/services/github.service";
 import { UserRepository } from "@v1/shared/repositories/user.repository";
-import { ProjectRepository } from "@v1/project/repositories/project.repository";
 import { DeploymentService } from "@v1/project/services/deployment.service";
+import { ProjectRepository } from "@v1/project/repositories/project.repository";
 
 import {
   GetRepositoriesDTO,
@@ -27,12 +31,12 @@ import {
   GetRepositoryDTO,
   TGetRepositoryDTO,
 } from "../dtos/get-repository.dto";
-import {
-  GithubRepositoryWebhookDTO,
-  TGithubRepositoryWebhookDTO,
-} from "../dtos/github-repository-webhook.dto";
 import { GetUserDTO, TGetUserDTO } from "../dtos/get-user.dto";
 import { UserGhIntegrationRepository } from "../repositories/user-gh-integration.repository";
+import {
+  GetGhIntegrationStatusDTO,
+  TGetGhIntegrationStatusDTO,
+} from "../dtos/get-gh-integration.dto";
 
 @injectable()
 export class UserService {
@@ -77,6 +81,8 @@ export class UserService {
 
     const { code, installationId } = dto;
 
+    console.log({ dto });
+
     const params = new URLSearchParams({
       client_id: env.GITHUB_APP_CLIENT_ID,
       client_secret: env.GITHUB_APP_CLIENT_SECRET,
@@ -103,7 +109,7 @@ export class UserService {
 
     // Query a user with the same github id
     const integration =
-      await this.integrationRepository.getByGhId(userGithubId);
+      await this.integrationRepository.getByGhUserId(userGithubId);
 
     if (!integration) return;
 
@@ -111,6 +117,28 @@ export class UserService {
     await this.integrationRepository.update(integration.id, {
       ghInstallationId: installationId,
     });
+  }
+
+  async getGithubIntegrationStatus(
+    dto: TGetGhIntegrationStatusDTO
+  ): Promise<{ isInstalled: boolean }> {
+    const validation = GetGhIntegrationStatusDTO.safeParse(dto);
+
+    if (!validation.success)
+      throw new BadRequestError(getZodErrors(validation.error));
+
+    const { userId } = dto;
+
+    const integration = await this.integrationRepository.getByUserId(userId);
+
+    if (!integration)
+      throw new InternalServerError(
+        `Not found github integration for user ${userId}`
+      );
+
+    const isInstalled = typeof integration.ghInstallationId === "number";
+
+    return { isInstalled };
   }
 
   async getRepositories(
@@ -193,47 +221,5 @@ export class UserService {
       );
 
     return result.data;
-  }
-
-  async handleGhRepositoryWebhook(dto: TGithubRepositoryWebhookDTO) {
-    const validation = GithubRepositoryWebhookDTO.safeParse(dto);
-
-    if (!validation.success) {
-      const errors = getZodErrors(validation.error);
-      logger.error(
-        `Error validating github repository webhook request, errors: `
-      );
-      console.log(errors);
-      throw new BadRequestError(errors);
-    }
-    const {
-      installation: { id: installationId },
-      repository: { full_name: repoNamespace },
-    } = dto;
-
-    const installation =
-      await this.integrationRepository.getByGhId(installationId);
-
-    if (!installation)
-      throw new BadRequestError(
-        `Not found user for installation ${installationId}`
-      );
-
-    const { userId } = installation;
-    const [owner, name] = repoNamespace.split("/");
-
-    const repositories =
-      await this.projectRepository.getRepositoriesByOwnerAndName({
-        owner,
-        name,
-        userId,
-      });
-
-    if (repositories.length === 0)
-      throw new NotFoundError(
-        `Not found a project connected with this repository!`
-      );
-
-    // await this.deploymentService.createNew({projectId: projectId, userId});
   }
 }

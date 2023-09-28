@@ -9,7 +9,10 @@ import {
 } from "@vercelclone/core/src/db";
 
 export interface IUserGhIntegrationRepository {
-  getByGhId: (ghId: number) => Promise<UserGhIntegration | undefined>;
+  getByGhInstallationId: (
+    ghInstallationId: number
+  ) => Promise<UserGhIntegration | undefined>;
+  getByGhUserId: (ghUserId: number) => Promise<UserGhIntegration | undefined>;
   getByUserId: (userId: string) => Promise<UserGhIntegration | undefined>;
   update: (
     id: string,
@@ -23,9 +26,15 @@ export class UserGhIntegrationRepository
 {
   constructor() {}
 
-  async getByGhId(ghId: number) {
+  async getByGhInstallationId(ghInstallationId: number) {
     return db.query.userGhIntegrations.findFirst({
-      where: eq(userGhIntegrations.ghUserId, ghId),
+      where: eq(userGhIntegrations.ghInstallationId, ghInstallationId),
+    });
+  }
+
+  async getByGhUserId(ghUserId: number) {
+    return db.query.userGhIntegrations.findFirst({
+      where: eq(userGhIntegrations.ghUserId, ghUserId),
     });
   }
 

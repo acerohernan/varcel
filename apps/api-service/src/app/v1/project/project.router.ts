@@ -2,9 +2,9 @@ import Router from "express-promise-router";
 
 import { container } from "@v1/shared/container";
 import { CONTAINER_TYPES } from "@v1/shared/container/types";
+import { verifyJwt } from "@v1/shared/middlewares/verifyJwt";
 
 import { ProjectController } from "./project.controller";
-import { verifyJwt } from "@v1/shared/middlewares/verifyJwt";
 
 export const projectRouter = Router();
 
@@ -26,8 +26,4 @@ projectRouter.get("/:projectName", verifyJwt, (req, res) =>
 
 projectRouter.get("/:projectName/deployment", verifyJwt, (req, res) =>
   controller.getDeploymentsHandler(req, res)
-);
-
-projectRouter.post("/:projectId/deployment", verifyJwt, (req, res) =>
-  controller.createDeploymentHandler(req, res)
 );

@@ -58,18 +58,6 @@ export class ProjectController {
     res.send({ deploymentId });
   }
 
-  async createDeploymentHandler(req: Request, res: Response) {
-    const user: JWTUser = res.locals.user;
-
-    if (!user) throw new UnathorizedError("Token malformed");
-
-    const projectId = req.params["projectId"];
-
-    await this.deploymentService.createNew({ projectId, userId: user.id });
-
-    res.sendStatus(200);
-  }
-
   async getProjectHandler(req: Request, res: Response) {
     const user: JWTUser = res.locals.user;
 
