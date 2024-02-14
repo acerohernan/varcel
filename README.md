@@ -1,11 +1,15 @@
-# Vercel Clone Monorepo
+# Varcel
 
-## System Design (AWS)
+## System Design
 
-![Project screenshoot](docs/diagram.svg)
+![System design diagram](docs/system-desing.jpeg)
+
+## AWS System Design
+
+![AWS project diagram](docs/cloud-diagram.jpeg)
 
 ## Screenshoots
 
-![Project screenshoot2](docs/screenshot-2.png)
+![Project configuration page](docs/screenshot-2.png)
 
-![Project screenshoot](docs/screenshot.png)
+![Project deployment page](docs/screenshot.png)
