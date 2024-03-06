@@ -2,7 +2,7 @@
 
 ## System Design
 
-![System design diagram](docs/system-desing.jpeg)
+![System design diagram](docs/system-design.jpeg)
 
 ## AWS System Design
 
